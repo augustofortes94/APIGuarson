@@ -3,6 +3,7 @@ from django.db import models
 # Create your models here.
 
 class Weapon(models.Model):
+    command=models.CharField(max_length=50)
     name=models.CharField(max_length=50)
     muzzle=models.CharField(max_length=100, null=True, blank=True, default=None)
     barrel=models.CharField(max_length=100, null=True, blank=True, default=None)
