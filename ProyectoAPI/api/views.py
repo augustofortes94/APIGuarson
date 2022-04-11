@@ -43,24 +43,27 @@ class WeaponView(View):
 
     def post(self, request):
         data = json.loads(request.body)
-        Weapon.objects.create(
-            command=data['command'],
-            category=data['category'],
-            name=data['name'],
-            muzzle=data['muzzle'],
-            barrel=data['barrel'],
-            laser=data['laser'],
-            optic=data['optic'],
-            stock=data['stock'],
-            underbarrel=data['underbarrel'],
-            magazine=data['magazine'],
-            ammunition=data['ammunition'],
-            reargrip=data['reargrip'],
-            perk=data['perk'],
-            perk2=data['perk2'],
-            alternative=data['alternative']
-        )
-        return JsonResponse({'message':"Success"})
+        if len(list(Weapon.objects.filter(command=data['command']).values())) > 0:
+            return JsonResponse({'message':"Error: this weapon already exist"})
+        else:
+            Weapon.objects.create(
+                command=data['command'],
+                category=data['category'],
+                name=data['name'],
+                muzzle=data['muzzle'],
+                barrel=data['barrel'],
+                laser=data['laser'],
+                optic=data['optic'],
+                stock=data['stock'],
+                underbarrel=data['underbarrel'],
+                magazine=data['magazine'],
+                ammunition=data['ammunition'],
+                reargrip=data['reargrip'],
+                perk=data['perk'],
+                perk2=data['perk2'],
+                alternative=data['alternative']
+            )
+            return JsonResponse({'message':"Success"})
     
     @login_required
     def put(self, request, id):
