@@ -2,8 +2,15 @@ from django.db import models
 
 # Create your models here.
 
+class user(models.Model):
+    firstname=models.CharField(max_length=50)
+    lastname=models.CharField(max_length=50)
+    username=models.CharField(max_length=50)
+    password=models.CharField(max_length=50)
+
 class Weapon(models.Model):
     command=models.CharField(max_length=50)
+    category=models.CharField(max_length=50)
     name=models.CharField(max_length=50)
     muzzle=models.CharField(max_length=100, null=True, blank=True, default=None)
     barrel=models.CharField(max_length=100, null=True, blank=True, default=None)

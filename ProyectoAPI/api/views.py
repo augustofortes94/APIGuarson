@@ -1,10 +1,12 @@
 import json
 from unicodedata import name
+import django
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
 
 from django.views import View
 from pymysql import NULL
@@ -13,6 +15,12 @@ from .models import Weapon
 import json
 
 # Create your views here.
+
+class Home(View):
+
+    @login_required
+    def index(request):
+        return render(request, 'login.html')
 
 class WeaponView(View):
 
@@ -37,6 +45,7 @@ class WeaponView(View):
         data = json.loads(request.body)
         Weapon.objects.create(
             command=data['command'],
+            category=data['category'],
             name=data['name'],
             muzzle=data['muzzle'],
             barrel=data['barrel'],
@@ -53,12 +62,14 @@ class WeaponView(View):
         )
         return JsonResponse({'message':"Success"})
     
+    @login_required
     def put(self, request, id):
         data = json.loads(request.body)
         weapons=list(Weapon.objects.filter(id=id).values())
         if len(weapons) > 0:
             weapon=Weapon.objects.get(id=id)
             weapon.command= data['command']
+            weapon.category=data['category'],
             weapon.name= data['name']
             weapon.muzzle= data['muzzle']
             weapon.barrel= data['barrel']
@@ -77,6 +88,7 @@ class WeaponView(View):
         else:
             return JsonResponse({'message':"Error: weapon not found..."})
     
+    @login_required
     def delete(self, request, id):
         weapons=list(Weapon.objects.filter(id=id).values())
         if len(weapons) > 0:
