@@ -77,19 +77,21 @@ WSGI_APPLICATION = 'ProyectoAPI.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-"""DATABASES = {
+#PRODUCCION
+if os.getenv('MODE') == "prod":
+    DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'HOST': 'localhost',
-        'PORT': '3306',
-        'USER': 'root',
-        'PASSWORD': '1234',
-        'NAME': 'apiguarson',
-        'OPTIONS': {'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"}
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'HOST': os.getenv('DATABASE_HOST'),
+        'PORT': '5432',
+        'USER': os.getenv('DATABASE_USER'),
+        'PASSWORD': os.getenv('DATABASE_PSW'),
+        'NAME': 'DATABASE_NAME'
+        }
     }
-}"""
 
-DATABASES = {
+else:       ##Desarrollo
+    DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'HOST': 'localhost',
@@ -97,9 +99,8 @@ DATABASES = {
         'USER': 'postgres',
         'PASSWORD': '1234',
         'NAME': 'apiguarson'
-        #'OPTIONS': {'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"}
+        }
     }
-}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
