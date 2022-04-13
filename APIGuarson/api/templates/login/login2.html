@@ -10,14 +10,14 @@
                 <tr class="table-info">
                     <th class="text-center">Weapons</th>
                     <th class="text-center">Command</th>
-                    <th class="text-center">Category</th>
+                    <th class="text-center">Class</th>
                     <th class="text-center">Options</th>
                 </tr>
-                {% for weapon in weapons %}
+                {% for weap in weapon %}
                 <tr>
-                    <td class="text-center">{{ weapon.name }}</td>
-                    <td class="text-center"><a class="btn btn-link" href="weapon/{{ weapon.command }}">/{{ weapon.command }}</a></td>
-                    <td class="text-center">{{ weapon.category }}</td>
+                    <td class="text-center">{{ weap.name }}</td>
+                    <td class="text-center"><a class="btn btn-link" href="weapon/{{ weapon.command }}">/{{ weap.command }}</a></td>
+                    <td class="text-center">{{ weap.category }}</td>
                     <td class="text-center"><a class="btn btn-success">Edit</a><a class="btn btn-danger ms-3">Delete</a></td>
                 </tr>
                 {% endfor %}

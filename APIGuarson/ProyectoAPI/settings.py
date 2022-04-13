@@ -25,12 +25,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-c11le^uvw_$aa1mee2hxfl32j527v*5ow%f+rj*-@u(e3ei%h7'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+if os.getenv('ENVIRONMENT_MODE') == "prod":
+    DEBUG = False
+else:
+    DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = ''
+LOGOUT_REDIRECT_URL = ''
 
 CSRF_TRUSTED_ORIGINS = ["https://apiguarson.herokuapp.com"]
 

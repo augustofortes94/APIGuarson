@@ -16,11 +16,15 @@ import json
 
 # Create your views here.
 
-class Home(View):
+class HomeView(View):
 
-    @login_required
     def index(request):
-        return render(request, 'login.html')
+        weapons=list(Weapon.objects.values())
+        return render(request, 'login/login.html', {"weapons": weapons})
+    
+    def weaponDetail(request, command):
+        weapon=list(Weapon.objects.filter(command=command).values())
+        return render(request, 'login/login2.html', {"weapon": weapon})
 
 class WeaponView(View):
 
