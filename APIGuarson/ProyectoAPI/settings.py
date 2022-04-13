@@ -89,7 +89,7 @@ if os.getenv('ENVIRONMENT_MODE') == "prod":
         'PORT': '5432',
         'USER': os.getenv('DATABASE_USER'),
         'PASSWORD': os.getenv('DATABASE_PSW'),
-        'NAME': 'DATABASE_NAME'
+        'NAME': os.getenv('DATABASE_NAME')
         }
     }
 
