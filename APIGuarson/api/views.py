@@ -23,7 +23,7 @@ class HomeView(View):
         return render(request, 'login/login.html', {"weapons": weapons})
     
     def weaponDetail(request, command):
-        weapon=list(Weapon.objects.filter(command=command).values())
+        weapon=Weapon.objects.filter(command=command).first()
         return render(request, 'login/login2.html', {"weapon": weapon})
 
 class WeaponView(View):
