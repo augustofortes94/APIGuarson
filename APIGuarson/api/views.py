@@ -18,13 +18,13 @@ import json
 
 class HomeView(View):
 
-    def index(request):
+    def weaponList(request):
         weapons=list(Weapon.objects.values())
-        return render(request, 'login/login.html', {"weapons": weapons})
+        return render(request, 'crud_weapons/weapons_list.html', {"weapons": weapons})
     
     def weaponDetail(request, command):
         weapon=Weapon.objects.filter(command=command).first()
-        return render(request, 'login/login2.html', {"weapon": weapon})
+        return render(request, 'crud_weapons/weapon_detail.html', {"weapon": weapon})
 
 class WeaponView(View):
 

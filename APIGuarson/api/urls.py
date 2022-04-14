@@ -3,7 +3,7 @@ from .views import WeaponView, HomeView
 from django.contrib.auth import views as auth_views
 
 urlpatterns=[
-    path('', HomeView.index),
+    path('', HomeView.weaponList),
     path('weapon/<str:command>', HomeView.weaponDetail),
     path('login/', auth_views.LoginView.as_view(template_name='login/login.html'), name='login'),
     path('api/weapons/', WeaponView.as_view(), name='weapons_list'),

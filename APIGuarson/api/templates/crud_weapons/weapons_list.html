@@ -1,17 +1,18 @@
-{% extends "./layout.html" %}
+{% extends "../layout.html" %}
 
-{% block title %} Hola mundo {% endblock %}
+{% block title %} Weapons List {% endblock %}
 
 
 {% block body %}
     <body>
-        <div class="d-flex justify-content-center">
+        <h4 class="text-center">Weapons</h4>
+        <div class="d-flex justify-content-center mt-5">
             <table class="table table-hover table-striped w-50">
                 <tr class="table-info">
-                    <th class="text-center">Weapons</th>
-                    <th class="text-center">Command</th>
-                    <th class="text-center">Category</th>
-                    <th class="text-center">Options</th>
+                    <th class="text-center">Armas</th>
+                    <th class="text-center">Comandos</th>
+                    <th class="text-center">Categorias</th>
+                    <th class="text-center">Opciones</th>
                 </tr>
                 {% for weapon in weapons %}
                 <tr>
