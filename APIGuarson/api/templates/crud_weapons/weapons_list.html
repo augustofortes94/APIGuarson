@@ -4,25 +4,26 @@
 
 
 {% block body %}
-    <body>
-        <h4 class="text-center">Weapons</h4>
-        <div class="d-flex justify-content-center mt-5">
-            <table class="table table-hover table-striped w-50">
-                <tr class="table-info">
-                    <th class="text-center">Armas</th>
-                    <th class="text-center">Comandos</th>
-                    <th class="text-center">Categorias</th>
-                    <th class="text-center">Opciones</th>
-                </tr>
-                {% for weapon in weapons %}
-                <tr>
-                    <td class="text-center">{{ weapon.name }}</td>
-                    <td class="text-center"><a class="btn btn-link" href="weapon/{{ weapon.command }}">/{{ weapon.command }}</a></td>
-                    <td class="text-center">{{ weapon.category }}</td>
-                    <td class="text-center"><a class="btn btn-success">Edit</a><a class="btn btn-danger ms-3">Delete</a></td>
-                </tr>
-                {% endfor %}
-            </table>
-        </div>
-    </body>
+    <h4 class="text-center">Weapons</h4>
+    <div class="d-flex justify-content-center py-2">
+        <table class="table table-hover table-striped w-75">
+            <tr class="table-info">
+                <th class="text-center">Armas</th>
+                <th class="text-center">Comandos</th>
+                <th class="text-center">Categorias</th>
+                <th class="text-center">Opciones</th>
+            </tr>
+            {% for weapon in weapons %}
+            <tr>
+                <td class="text-center">{{ weapon.name }}</td>
+                <td class="text-center"><a class="btn btn-link" href="/weapon/{{ weapon.command }}">/{{ weapon.command }}</a></td>
+                <td class="text-center">{{ weapon.category }}</td>
+                <td class="text-center"><a class="btn btn-success" href="/weapon/edit/{{ weapon.command }}">Edit</a><a class="btn btn-danger ms-3">Delete</a></td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    <div class="d-grid gap-2 col-1 mx-auto">
+        <a class="btn btn-warning" href="weapon/add">Add</a>
+    </div>
 {% endblock %}

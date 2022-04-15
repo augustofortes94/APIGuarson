@@ -3,73 +3,71 @@
 {% block title %} {{ weapon.name }} {% endblock %}
 
 {% block body %}
-    <body>
-        <div class="d-flex justify-content-center mt-5">
-            <table class="table table-striped w-50">
-                <tr class="table-info">
-                    <th class="text-center" colspan="2">{{ weapon.name }}</th>
-                </tr>
-                <tr>
-                    <td class="text-center">Comando</td>
-                    <td class="text-center">/{{ weapon.command }}</td>
-                </tr>
-                <tr>
-                    <td class="text-center">Categoria</td>
-                    <td class="text-center">{{ weapon.category }}</td>
-                </tr>
-                <tr>
-                    <td class="text-center">Muzzle</td>
-                    <td class="text-center">{{ weapon.muzzle }}</td>
-                </tr>
-                <tr>
-                    <td class="text-center">Barrel</td>
-                    <td class="text-center">{{ weapon.barrel }}</td>
-                </tr>
-                <tr>
-                    <td class="text-center">Laser</td>
-                    <td class="text-center">{{ weapon.laser }}</td>
-                </tr>
-                <tr>
-                    <td class="text-center">Optic</td>
-                    <td class="text-center">{{ weapon.optic }}</td>
-                </tr>
-                <tr>
-                    <td class="text-center">Stock</td>
-                    <td class="text-center">{{ weapon.stock }}</td>
-                </tr>
-                <tr>
-                    <td class="text-center">Underbarrel</td>
-                    <td class="text-center">{{ weapon.underbarrel }}</td>
-                </tr>
-                <tr>
-                    <td class="text-center">Magazine</td>
-                    <td class="text-center">{{ weapon.magazine }}</td>
-                </tr>
-                <tr>
-                    <td class="text-center">Ammunition</td>
-                    <td class="text-center">{{ weapon.ammunition }}</td>
-                </tr>
-                <tr>
-                    <td class="text-center">Reargrip</td>
-                    <td class="text-center">{{ weapon.reargrip }}</td>
-                </tr>
-                <tr>
-                    <td class="text-center">Perk</td>
-                    <td class="text-center">{{ weapon.perk }}</td>
-                </tr>
-                <tr>
-                    <td class="text-center">Perk 2</td>
-                    <td class="text-center">{{ weapon.perk2 }}</td>
-                </tr>
-                <tr>
-                    <td class="text-center">Alternative</td>
-                    <td class="text-center">{{ weapon.alternative }}</td>
-                </tr>
-            </table>
-        </div>
-        <div class="d-flex justify-content-center mb-3">
-            <a class="btn btn-success me-5">Edit</a>
-            <a class="btn btn-danger ms-5">Delete</a>
-        </div>
-    </body>
+    <div class="d-flex justify-content-center py-2">
+        <table class="table table-striped w-50">
+            <tr class="table-info">
+                <th class="text-center" colspan="2">{{ weapon.name }}</th>
+            </tr>
+            <tr>
+                <td class="text-center">Comando</td>
+                <td class="text-center">/{{ weapon.command }}</td>
+            </tr>
+            <tr>
+                <td class="text-center">Categoria</td>
+                <td class="text-center">{{ weapon.category }}</td>
+            </tr>
+            <tr>
+                <td class="text-center">Muzzle</td>
+                <td class="text-center">{{ weapon.muzzle }}</td>
+            </tr>
+            <tr>
+                <td class="text-center">Barrel</td>
+                <td class="text-center">{{ weapon.barrel }}</td>
+            </tr>
+            <tr>
+                <td class="text-center">Laser</td>
+                <td class="text-center">{{ weapon.laser }}</td>
+            </tr>
+            <tr>
+                <td class="text-center">Optic</td>
+                <td class="text-center">{{ weapon.optic }}</td>
+            </tr>
+            <tr>
+                <td class="text-center">Stock</td>
+                <td class="text-center">{{ weapon.stock }}</td>
+            </tr>
+            <tr>
+                <td class="text-center">Underbarrel</td>
+                <td class="text-center">{{ weapon.underbarrel }}</td>
+            </tr>
+            <tr>
+                <td class="text-center">Magazine</td>
+                <td class="text-center">{{ weapon.magazine }}</td>
+            </tr>
+            <tr>
+                <td class="text-center">Ammunition</td>
+                <td class="text-center">{{ weapon.ammunition }}</td>
+            </tr>
+            <tr>
+                <td class="text-center">Reargrip</td>
+                <td class="text-center">{{ weapon.reargrip }}</td>
+            </tr>
+            <tr>
+                <td class="text-center">Perk</td>
+                <td class="text-center">{{ weapon.perk }}</td>
+            </tr>
+            <tr>
+                <td class="text-center">Perk 2</td>
+                <td class="text-center">{{ weapon.perk2 }}</td>
+            </tr>
+            <tr>
+                <td class="text-center">Alternative</td>
+                <td class="text-center">{{ weapon.alternative }}</td>
+            </tr>
+        </table>
+    </div>
+    <div class="d-flex justify-content-center mb-3">
+        <a class="btn btn-success me-5" href="/weapon/edit/{{ weapon.command }}">Edit</a>
+        <a class="btn btn-danger ms-5">Delete</a>
+    </div>
 {% endblock %}

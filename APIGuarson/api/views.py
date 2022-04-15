@@ -17,17 +17,26 @@ import json
 # Create your views here.
 
 class HomeView(View):
+    def homeview():
+        pass
+
+class WeaponView(View):
+
+    def weaponAdd(request):
+        return render(request, 'crud_weapons/weapon_add.html')
+
+    def weaponDetail(request, command):
+        weapon=Weapon.objects.filter(command=command).first()
+        return render(request, 'crud_weapons/weapon_detail.html', {"weapon": weapon})
+
+    def weaponEdit(request, command):
+        weapon=Weapon.objects.filter(command=command).first()
+        return render(request, 'crud_weapons/weapon_edit.html', {"weapon": weapon})
 
     def weaponList(request):
         weapons=list(Weapon.objects.values())
         return render(request, 'crud_weapons/weapons_list.html', {"weapons": weapons})
     
-    def weaponDetail(request, command):
-        weapon=Weapon.objects.filter(command=command).first()
-        return render(request, 'crud_weapons/weapon_detail.html', {"weapon": weapon})
-
-class WeaponView(View):
-
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
@@ -69,14 +78,14 @@ class WeaponView(View):
             )
             return JsonResponse({'message':"Success"})
     
-    @login_required
     def put(self, request, id):
         data = json.loads(request.body)
+        print("ENTRO")
         weapons=list(Weapon.objects.filter(id=id).values())
         if len(weapons) > 0:
             weapon=Weapon.objects.get(id=id)
             weapon.command= data['command']
-            weapon.category=data['category'],
+            weapon.category=data['category']
             weapon.name= data['name']
             weapon.muzzle= data['muzzle']
             weapon.barrel= data['barrel']
