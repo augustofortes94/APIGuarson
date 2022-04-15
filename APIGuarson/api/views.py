@@ -80,7 +80,6 @@ class WeaponView(View):
     
     def put(self, request, id):
         data = json.loads(request.body)
-        print("ENTRO")
         weapons=list(Weapon.objects.filter(id=id).values())
         if len(weapons) > 0:
             weapon=Weapon.objects.get(id=id)
