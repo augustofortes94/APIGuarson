@@ -18,12 +18,12 @@
                 <td class="text-center">{{ weapon.name }}</td>
                 <td class="text-center"><a class="btn btn-link" href="/weapon/{{ weapon.command }}">/{{ weapon.command }}</a></td>
                 <td class="text-center">{{ weapon.category }}</td>
-                <td class="text-center"><a class="btn btn-success" href="/weapon/edit/{{ weapon.command }}">Edit</a><a class="btn btn-danger ms-3">Delete</a></td>
+                <td class="text-center"><a class="btn btn-success" href="/weapon/edit/{{ weapon.command }}">Edit</a><a class="btn btn-danger ms-3" href="/weapon/delete/{{ weapon.id }}">Delete</a></td>
             </tr>
             {% endfor %}
         </table>
     </div>
     <div class="d-grid gap-2 col-1 mx-auto">
-        <a class="btn btn-warning" href="/weapon/add">Add</a>
+        <a class="btn btn-warning" href="/weapon/addform">Add</a>
     </div>
 {% endblock %}

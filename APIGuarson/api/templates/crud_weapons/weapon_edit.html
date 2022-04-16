@@ -8,7 +8,7 @@
             <div class="card w-75">
                 <h3 class="text-center pt-1">Editar {{ weapon.name }}</h2>
                 <div class="card-body">
-                    <form id="edit-weapon" action="/weapon/list" name="edit-weapon-form">
+                    <form id="edit-weapon" action="/weapon/edition/{{ weapon.id }}" method="POST" name="edit-weapon-form">{% csrf_token %}
                         <div class="input-group pt-2">
                             <span class="input-group-text" id="basic-addon3">Name</span>
                             <input type="text" class="form-control" id="edit-name" name="name" value="{{ weapon.name }}" required>
@@ -88,11 +88,7 @@
     </div>
     
     <script type="text/javascript">
-        function sleep(ms) {
-            return new Promise(resolve => setTimeout(resolve, ms));
-        }
-
-        async function handleSubmit(event) {
+        /*function funcion(event) {
             event.preventDefault();
 
             const data = new FormData(event.target);
@@ -104,14 +100,15 @@
                 }
             });
             var xhr = new XMLHttpRequest();
-            xhr.open("PUT", '/api/weapons/{{ weapon.id }}', true);
+            var token = ("meta[name='_csrf']").attr("content");
+            var header = ("meta[name='_csrf_header']").attr("content");
+            xhr.open("PUT", '/weapon/edition', true);
             xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
             xhr.send(JSON.stringify(json));
-            await sleep(2000);
-            window.location.href = "/weapon/list";
-        }
+        }*/
 
-        const form = document.querySelector('form');
-        form.addEventListener('submit', handleSubmit);
+        /*const form = document.querySelector('form');
+        form.addEventListener('submit', handleSubmit);*/
+
     </script>
 {% endblock %}

@@ -8,7 +8,7 @@
             <div class="card w-75">
                 <h3 class="text-center pt-1">Agregar Arma</h2>
                 <div class="card-body">
-                    <form id="add-weapon" name="add-weapon-form">
+                    <form id="add-weapon" action="/weapon/add" method="POST" name="add-weapon-form">{% csrf_token %}
                         <div class="input-group pt-2">
                             <span class="input-group-text" id="basic-addon3">Name</span>
                             <input type="text" class="form-control" id="add-name" name="name" required>
@@ -86,32 +86,4 @@
             </div>
         </div>
     </div>
-    
-    <script type="text/javascript">
-        function sleep(ms) {
-            return new Promise(resolve => setTimeout(resolve, ms));
-        }
-
-        async function handleSubmit(event) {
-            event.preventDefault();
-
-            const data = new FormData(event.target);
-            json = Object.fromEntries(data.entries());
-
-            Object.keys(json).map(function (key, index) {
-                if (json[key] == "") {
-                    json[key] = null;
-                }
-            });
-            var xhr = new XMLHttpRequest();
-            xhr.open("POST", '/api/weapons/', true);
-            xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
-            xhr.send(JSON.stringify(json));
-            await sleep(2000);
-            window.location.href = "/weapon/list";
-        }
-
-        const form = document.querySelector('form');
-        form.addEventListener('submit', handleSubmit);
-    </script>
 {% endblock %}
