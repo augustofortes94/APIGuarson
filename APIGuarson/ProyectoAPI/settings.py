@@ -32,8 +32,8 @@ else:
 
 ALLOWED_HOSTS = ['*']
 
-LOGIN_REDIRECT_URL = ''
-LOGOUT_REDIRECT_URL = ''
+LOGIN_REDIRECT_URL = '/weapon/list'
+LOGOUT_REDIRECT_URL = '/account/login'
 
 CSRF_TRUSTED_ORIGINS = ["https://apiguarson.herokuapp.com"]
 

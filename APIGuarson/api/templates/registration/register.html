@@ -1,0 +1,37 @@
+{% extends '../layout.html' %}
+
+{% block title %}Register{% endblock %}
+
+{% block body %}
+    <div class="d-flex justify-content-center py-2">
+        <form class="form-signin w-50" action="/register/user" method="POST">{% csrf_token %}
+            <h1 class="h3 mb-3 fw-normal">Register</h1>
+            <input type="hidden" name="csrf_token" value="">
+            <div class="form-floating py-2">
+                <input type="text" class="form-control" id="username" name="username" placeholder="Username">
+                <label for="username">Username</label>
+            </div>
+            <div class="form-floating py-2">
+                <input type="text" class="form-control" id="first_name" name="first_name" placeholder="Nombre">
+                <label for="first_name">Nombre</label>
+            </div>
+            <div class="form-floating py-2">
+                <input type="text" class="form-control" id="last_name" name="last_name" placeholder="Apellido">
+                <label for="last_name">Apellido</label>
+            </div>
+            <div class="form-floating py-2">
+                <input type="text" class="form-control" id="email" name="email" placeholder="Email">
+                <label for="email">Email</label>
+            </div>
+            <div class="form-floating py-2">
+                <input type="password" class="form-control" name="password" placeholder="Password">
+                <label for="password">Password</label>
+            </div>
+            <div class="form-floating py-2">
+                <input type="password" class="form-control" name="password2" placeholder="Password">
+                <label for="password">Confirme Password</label>
+            </div>
+            <button class="w-100 btn btn-lg btn-primary" type="submit">Sign in</button>
+        </form>
+     </div>
+{% endblock %}

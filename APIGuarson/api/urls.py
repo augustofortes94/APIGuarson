@@ -1,18 +1,21 @@
-from django.urls import path
-from .views import WeaponView
+from xml.etree.ElementInclude import include
+from django.urls import path, include
+from .views import HomeView, RegisterUser, WeaponView
 from django.contrib.auth import views as auth_views
 
 urlpatterns=[
-    path('', WeaponView.weaponList),
-    path('weapon/list', WeaponView.weaponList),
+    path('', HomeView.homeview),
+    path('accounts/', include('django.contrib.auth.urls')),
+    #path('register/', RegisterUser.register, name='register'),
+    #path('register/user', RegisterUser.registerUser, name='register_user'),
+    path('api/weapons/', WeaponView.as_view(), name='weapons_list'),
+    path('api/weapons/<int:id>', WeaponView.as_view(), name='weapon_get_id'),
+    path('api/weapons/<str:command>', WeaponView.as_view(), name='weapon_get_command'),
+    path('weapon/list', WeaponView.weaponList, name='weapons_list'),
     path('weapon/add', WeaponView.weaponAdd),
     path('weapon/addform', WeaponView.weaponAddForm),
     path('weapon/delete/<int:id>', WeaponView.weaponDelete),
     path('weapon/edition/<int:id>', WeaponView.weaponEdition),
     path('weapon/edit/<str:command>', WeaponView.weaponEdit),
     path('weapon/<str:command>', WeaponView.weaponDetail),
-    path('login/', auth_views.LoginView.as_view(template_name='login/login.html'), name='login'),
-    path('api/weapons/', WeaponView.as_view(), name='weapons_list'),
-    path('api/weapons/<int:id>', WeaponView.as_view(), name='weapon_get_id'),
-    path('api/weapons/<str:command>', WeaponView.as_view(), name='weapon_get_command'),
 ]

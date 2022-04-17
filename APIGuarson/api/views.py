@@ -1,14 +1,17 @@
+import email
 import json
-from unicodedata import name
-import requests
-import django
+from re import template
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.utils.decorators import method_decorator
 from django.views import View
+from django.views.generic import CreateView
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
 from django.contrib import messages
+from django.urls import reverse_lazy
 
 from django.views import View
 from pymysql import NULL
@@ -17,13 +20,34 @@ from .models import Weapon
 import json
 
 # Create your views here.
+class RegisterUser(CreateView):
+    #model = User
+    #template_name = "registration/register.html"
+    #form_class = UserCreationForm
+    #success_url  = reverse_lazy('weapons:weapons_list')
+
+    def register(request):
+        return render(request, 'registration/register.html')
+
+    def registerUser(request):
+        print("HOLA")
+        print(request.body)
+        User.objects.create(
+            username=request.POST['username'],
+            first_name=request.POST['first_name'],
+            last_name=request.POST['last_name'],
+            email=request.POST['email'],
+            password=request.POST['password'],
+        )
+        return redirect('/weapon/list')
 
 class HomeView(View):
-    def homeview():
-        pass
+    @login_required
+    def homeview(request):
+        return redirect('/weapon/list')
 
 class WeaponView(View):
-
+    @login_required
     def add(data):
         Weapon.objects.create(
             command=data['command'],
@@ -42,7 +66,8 @@ class WeaponView(View):
             perk2=data['perk2'],
             alternative=data['alternative']
         )
-
+    
+    @login_required
     def edit(data, id):
         weapon=Weapon.objects.get(id=id)
         weapon.command= data['command']
@@ -62,6 +87,7 @@ class WeaponView(View):
         weapon.alternative= data['alternative']
         weapon.save()
 
+    @login_required
     def weaponAdd(request):
         data = {}
         for key in request.POST:
@@ -75,21 +101,26 @@ class WeaponView(View):
         WeaponView.add(data)
         return redirect('/weapon/list')
 
+    @login_required
     def weaponAddForm(request):
         return render(request, 'crud_weapons/weapon_add.html')
 
+    @login_required
     def weaponDelete(request, id):
         Weapon.objects.filter(id=id).delete()
         return redirect('/weapon/list')
 
+    @login_required
     def weaponDetail(request, command):
         weapon=Weapon.objects.filter(command=command).first()
         return render(request, 'crud_weapons/weapon_detail.html', {"weapon": weapon})
 
+    @login_required
     def weaponEdit(request, command):
         weapon=Weapon.objects.filter(command=command).first()
         return render(request, 'crud_weapons/weapon_edit.html', {"weapon": weapon})
 
+    @login_required
     def weaponEdition(request, id):
         data = {}
         for key in request.POST:
@@ -106,8 +137,6 @@ class WeaponView(View):
     def weaponList(request):
         weapons=list(Weapon.objects.values())
         return render(request, 'crud_weapons/weapons_list.html', {"weapons": weapons})
-
-    
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
@@ -143,6 +172,7 @@ class WeaponView(View):
         else:
             return JsonResponse({'message':"Error: weapon not found..."})
     
+    @login_required
     def delete(self, id):
         weapons=list(Weapon.objects.filter(id=id).values())
         if len(weapons) > 0:
