@@ -1,6 +1,4 @@
-import email
 import json
-from re import template
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.utils.decorators import method_decorator
@@ -8,26 +6,33 @@ from django.views import View
 from django.views.generic import CreateView
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.contrib import messages
-from django.urls import reverse_lazy
 
 from django.views import View
 from pymysql import NULL
 from .models import Weapon
+from .forms import UserRegisterForm
 
 import json
 
 # Create your views here.
 class RegisterUser(CreateView):
-    #model = User
-    #template_name = "registration/register.html"
-    #form_class = UserCreationForm
-    #success_url  = reverse_lazy('weapons:weapons_list')
 
     def register(request):
-        return render(request, 'registration/register.html')
+        if request.method == 'POST':
+            form = UserRegisterForm(request.POST)
+            if form.is_valid():
+                form.save()
+                username = form.cleaned_data.get('username')
+                messages.success(request, f'Account created for {username}, please Login')
+                return redirect('/weapon/list')
+            #else:
+                #messages.warning(request, 'User not created')
+                #return redirect('/weapon/list')
+        else:
+            form = UserRegisterForm()
+        return render(request, 'registration/register.html', {'form':form})
 
     def registerUser(request):
         print("HOLA")

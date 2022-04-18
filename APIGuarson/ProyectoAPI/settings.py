@@ -33,7 +33,7 @@ else:
 ALLOWED_HOSTS = ['*']
 
 LOGIN_REDIRECT_URL = '/weapon/list'
-LOGOUT_REDIRECT_URL = '/account/login'
+LOGOUT_REDIRECT_URL = '/'
 
 CSRF_TRUSTED_ORIGINS = ["https://apiguarson.herokuapp.com"]
 
@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'crispy_forms',
     'api'
 ]
 
@@ -157,3 +158,5 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 django_heroku.settings(locals())
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
