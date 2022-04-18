@@ -119,7 +119,7 @@ class WeaponView(View):
         if request.user.is_superuser == True:
             weapon=Weapon.objects.get(id=id)
             Weapon.objects.filter(id=id).delete()
-            messages.success(request,  weapon.name + ' ha sido modificada')
+            messages.success(request,  weapon.name + ' ha sido eliminada')
         else:
             messages.warning(request,  'Solo el superusuario puede eliminar')
         return redirect('/weapon/list')
