@@ -6,8 +6,6 @@ from django.contrib.auth import views as auth_views
 urlpatterns=[
     path('', HomeView.homeview),
     path('accounts/', include('django.contrib.auth.urls')),
-    #path('register/', RegisterUser.register, name='register'),
-    #path('register/user', RegisterUser.registerUser, name='register_user'),
     path('api/weapons/', WeaponView.as_view(), name='weapons_list'),
     path('api/weapons/<int:id>', WeaponView.as_view(), name='weapon_get_id'),
     path('api/weapons/<str:command>', WeaponView.as_view(), name='weapon_get_command'),
