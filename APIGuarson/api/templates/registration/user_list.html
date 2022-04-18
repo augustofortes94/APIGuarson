@@ -1,0 +1,32 @@
+{% extends "../layout.html" %}
+
+{% block title %} Users List {% endblock %}
+
+
+{% block body %}
+    <h4 class="text-center">Users</h4>
+    <div class="d-flex justify-content-center py-2">
+        <table class="table table-hover table-striped w-75">
+            <tr class="table-info">
+                <th class="text-center">Username</th>
+                <th class="text-center">Nombre</th>
+                <th class="text-center">Email</th>
+                <th class="text-center">Superusuario</th>
+                <th class="text-center">Opciones</th>
+            </tr>
+            {% for user in users %}
+            <tr>
+                <td class="text-center">{{ user.username }}</td>
+                <td class="text-center">{{ user.first_name }}</td>
+                <td class="text-center">{{ user.email }}</td>
+                <td class="text-center">{{ user.is_superuser }}</td>
+                <td class="text-center">
+                    {% if user.is_superuser != True %}
+                        <a class="btn btn-danger ms-3" href="/user/delete/{{ user.id }}">Delete</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endblock %}

@@ -18,7 +18,6 @@ import json
 
 # Create your views here.
 class RegisterUser(CreateView):
-
     def register(request):
         if request.method == 'POST':
             form = UserRegisterForm(request.POST)
@@ -27,24 +26,27 @@ class RegisterUser(CreateView):
                 username = form.cleaned_data.get('username')
                 messages.success(request, f'Account created for {username}, please Login')
                 return redirect('/weapon/list')
-            #else:
-                #messages.warning(request, 'User not created')
-                #return redirect('/weapon/list')
         else:
             form = UserRegisterForm()
         return render(request, 'registration/register.html', {'form':form})
 
-    def registerUser(request):
-        print("HOLA")
-        print(request.body)
-        User.objects.create(
-            username=request.POST['username'],
-            first_name=request.POST['first_name'],
-            last_name=request.POST['last_name'],
-            email=request.POST['email'],
-            password=request.POST['password'],
-        )
-        return redirect('/weapon/list')
+    @login_required
+    def userList(request):
+        if request.user.is_superuser == True:
+            users=list(User.objects.values())
+            return render(request, 'registration/user_list.html', {"users":users})
+        else:
+            messages.warning(request, 'Solo el superusuario puede acceder a esta vista')
+            return redirect('/weapon/list')
+
+    @login_required
+    def userDelete(request, id):
+        user=User.objects.get(id=id)
+        if user.is_superuser == True:
+            messages.warning(request, 'No es posible eliminar al superusuario')
+        else:
+            User.objects.filter(id=id).delete()
+        return redirect('/user/list')
 
 class HomeView(View):
     @login_required
@@ -53,7 +55,7 @@ class HomeView(View):
 
 class WeaponView(View):
     @login_required
-    def add(data):
+    def add(request, data):
         Weapon.objects.create(
             command=data['command'],
             category=data['category'],
@@ -73,7 +75,7 @@ class WeaponView(View):
         )
     
     @login_required
-    def edit(data, id):
+    def edit(request, data, id):
         weapon=Weapon.objects.get(id=id)
         weapon.command= data['command']
         weapon.category=data['category']
@@ -103,7 +105,9 @@ class WeaponView(View):
             else:
                 data[key] = request.POST[key]
         data = json.loads(json.dumps(data))
-        WeaponView.add(data)
+        print(request.POST)
+        WeaponView.add(request, data)
+        messages.success(request, data['name'] + 'ha sido creada')
         return redirect('/weapon/list')
 
     @login_required
@@ -112,10 +116,14 @@ class WeaponView(View):
 
     @login_required
     def weaponDelete(request, id):
-        Weapon.objects.filter(id=id).delete()
+        if request.user.is_superuser == True:
+            weapon=Weapon.objects.get(id=id)
+            Weapon.objects.filter(id=id).delete()
+            messages.success(request,  weapon.name + ' ha sido modificada')
+        else:
+            messages.warning(request,  'Solo el superusuario puede eliminar')
         return redirect('/weapon/list')
 
-    @login_required
     def weaponDetail(request, command):
         weapon=Weapon.objects.filter(command=command).first()
         return render(request, 'crud_weapons/weapon_detail.html', {"weapon": weapon})
@@ -136,7 +144,8 @@ class WeaponView(View):
             else:
                 data[key] = request.POST[key]
         data = json.loads(json.dumps(data))
-        WeaponView.edit(data, id)
+        WeaponView.edit(request, data, id)
+        messages.success(request, data['name'] + ' ha sido modificada')
         return redirect('/weapon/list')
 
     def weaponList(request):
@@ -165,20 +174,19 @@ class WeaponView(View):
         if len(list(Weapon.objects.filter(command=data['command']).values())) > 0:
             return JsonResponse({'message':"Error: this weapon already exist"})
         else:
-            WeaponView.add(data)
+            WeaponView.add(request, data)
             return JsonResponse({'message':"Success"})
     
     def put(self, request, id):
         data = json.loads(request.body)
         weapons=list(Weapon.objects.filter(id=id).values())
         if len(weapons) > 0:
-            WeaponView.edit(data, id)
+            WeaponView.edit(request, data, id)
             return JsonResponse({'message':"Success"})
         else:
             return JsonResponse({'message':"Error: weapon not found..."})
     
-    @login_required
-    def delete(self, id):
+    def delete(request, self, id):
         weapons=list(Weapon.objects.filter(id=id).values())
         if len(weapons) > 0:
             Weapon.objects.filter(id=id).delete()

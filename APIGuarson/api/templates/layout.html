@@ -14,42 +14,35 @@
     <header class="site-header">
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
           <div class="container">
-            <p class="navbar-brand mr-4">Guarson App</p>
+            <a class="navbar-brand mr-4 text-warning" href="https://cutt.ly/3F1gClO">Guarson App</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarToggle">
-              <div class="navbar-nav mr-auto">
-                <a class="nav-item nav-link" href="/weapon/list">Home</a>
-              </div>
+                <div class="navbar-nav mr-auto">
+                    <a class="nav-item nav-link" href="/weapon/list">Home</a>
+                    {% if request.user.is_superuser %}
+                        <a class="nav-item nav-link" href="/user/list">Edit Users</a>
+                    {% endif %}
+                </div>
+            </div>
               <!-- Navbar Right Side -->
-              <div class="navbar-nav">
-                {% if request.user.is_authenticated %}
-                    <a class="nav-item nav-link">{{ request.user }}</a>
-                    <a class="nav-item nav-link" href="/accounts/logout">Logout</a>
-                {% else %}
-                    <a class="nav-item nav-link" href="/accounts/login">Login</a>
-                    <a class="nav-item nav-link" href="/register">Register</a>
-                {% endif %}
-                
-              </div>
+            <div>
+                <div class="navbar-nav">
+                    {% if request.user.is_authenticated %}
+                        <a class="nav-item nav-link">{{ request.user }}</a>
+                        <a class="nav-item nav-link" href="/accounts/logout">Logout</a>
+                        
+                    {% else %}
+                        <a class="nav-item nav-link" href="/accounts/login">Login</a>
+                        <a class="nav-item nav-link" href="/register">Register</a>
+                    {% endif %}
+                </div>
             </div>
           </div>
         </nav>
-      </header>
-     <!-- A grey horizontal navbar that becomes vertical on small screens
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container-fluid">
-            {% if request.user.is_authenticated %}
-                <p class="navbar-brand">{{ request.user }}</p>
-                <a class="navbar-brand" href="/accounts/logout">Logout</a>
-            {% else %}
-                <a class="navbar-brand" href="/accounts/login">Login</a>
-                <a class="navbar-brand" href="/register">Register</a>
-            {% endif %}
-        </div>
-    </nav>-->
-    <div class="container d-flex justify-content-left w-25">
+    </header>
+    <div class="container d-flex justify-content-left w-25 mt-2">
         {% if messages %}
             {% for message in messages %}
                 <div class="alert alert-{{ message.tags }}">
@@ -58,7 +51,7 @@
             {% endfor %}
         {% endif %}
     </div>
-    <div class="container py-4">
+    <div class="container py-2">
         {% block body %}
 
         {% endblock %}

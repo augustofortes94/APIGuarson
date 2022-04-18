@@ -86,29 +86,4 @@
             </div>
         </div>
     </div>
-    
-    <script type="text/javascript">
-        /*function funcion(event) {
-            event.preventDefault();
-
-            const data = new FormData(event.target);
-            json = Object.fromEntries(data.entries());
-
-            Object.keys(json).map(function (key, index) {
-                if (json[key] == "" || json[key] == "None") {
-                    json[key] = null;
-                }
-            });
-            var xhr = new XMLHttpRequest();
-            var token = ("meta[name='_csrf']").attr("content");
-            var header = ("meta[name='_csrf_header']").attr("content");
-            xhr.open("PUT", '/weapon/edition', true);
-            xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
-            xhr.send(JSON.stringify(json));
-        }*/
-
-        /*const form = document.querySelector('form');
-        form.addEventListener('submit', handleSubmit);*/
-
-    </script>
 {% endblock %}

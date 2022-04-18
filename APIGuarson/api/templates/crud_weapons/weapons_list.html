@@ -11,14 +11,23 @@
                 <th class="text-center">Armas</th>
                 <th class="text-center">Comandos</th>
                 <th class="text-center">Categorias</th>
-                <th class="text-center">Opciones</th>
+                {% if request.user.is_authenticated %}
+                    <th class="text-center">Opciones</th>
+                {% endif %}
             </tr>
             {% for weapon in weapons %}
             <tr>
                 <td class="text-center">{{ weapon.name }}</td>
                 <td class="text-center"><a class="btn btn-link" href="/weapon/{{ weapon.command }}">/{{ weapon.command }}</a></td>
                 <td class="text-center">{{ weapon.category }}</td>
-                <td class="text-center"><a class="btn btn-success" href="/weapon/edit/{{ weapon.command }}">Edit</a><a class="btn btn-danger ms-3" href="/weapon/delete/{{ weapon.id }}">Delete</a></td>
+                {% if request.user.is_authenticated %}
+                    <td class="text-center">
+                        <a class="btn btn-success" href="/weapon/edit/{{ weapon.command }}">Edit</a>
+                        {% if request.user.is_superuser %}
+                            <a class="btn btn-danger ms-3" href="/weapon/delete/{{ weapon.id }}">Delete</a>
+                        {% endif %}
+                    </td>
+                {% endif %}
             </tr>
             {% endfor %}
         </table>
