@@ -71,7 +71,8 @@ class WeaponView(View):
             reargrip=data['reargrip'],
             perk=data['perk'],
             perk2=data['perk2'],
-            alternative=data['alternative']
+            alternative=data['alternative'],
+            alternative2=data['alternative2']
         )
     
     @login_required
@@ -92,6 +93,7 @@ class WeaponView(View):
         weapon.perk= data['perk']
         weapon.perk2= data['perk2']
         weapon.alternative= data['alternative']
+        weapon.alternative2= data['alternative2']
         weapon.save()
 
     @login_required
@@ -107,7 +109,7 @@ class WeaponView(View):
         data = json.loads(json.dumps(data))
         print(request.POST)
         WeaponView.add(request, data)
-        messages.success(request, data['name'] + 'ha sido creada')
+        messages.success(request, data['name'] + ' ha sido creada')
         return redirect('/weapon/list')
 
     @login_required

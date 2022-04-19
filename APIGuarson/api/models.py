@@ -24,3 +24,4 @@ class Weapon(models.Model):
     perk=models.CharField(max_length=100, null=True, blank=True, default=None)
     perk2=models.CharField(max_length=100, null=True, blank=True, default=None)
     alternative=models.CharField(max_length=512, null=True, blank=True, default=None)
+    alternative2=models.CharField(max_length=512, null=True, blank=True, default=None)
