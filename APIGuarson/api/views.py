@@ -13,10 +13,41 @@ from django.views import View
 from pymysql import NULL
 from .models import Weapon
 from .forms import UserRegisterForm
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from .serializers import UserSerializer
+import jwt, datetime
 
 import json
 
 # Create your views here.
+
+class ApiLogin(APIView):
+    def post(self, request):
+        username = request.data['username']
+        password = request.data['password']
+
+        user = User.objects.filter(username=username).first()
+        if user is None:
+            return JsonResponse({'message':"Error: user not found..."})
+
+        else:
+            if not user.check_password(password):
+                return JsonResponse({'message':"Error: incorrect password..."})
+            
+            payload = {
+            'id': user.id,
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=60),
+            'iat': datetime.datetime.utcnow()
+            }
+
+            token = jwt.encode(payload, 'secret', algorithm='HS256')
+
+            response = Response()
+            response.set_cookie(key='jwt', value=token, httponly=True)
+            response.data = {'jwt': token}
+            return response
+
 class RegisterUser(CreateView):
     def register(request):
         if request.method == 'POST':
@@ -158,18 +189,38 @@ class WeaponView(View):
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
 
-    def get(self, request, id=0, command=NULL):
-        if id > 0:      ##GET BY ID
-            weapons=list(Weapon.objects.filter(id=id).values())
-        elif command is not NULL:
-            weapons=list(Weapon.objects.filter(command=command).values())
-        else:           ##GET ALL
-            weapons=list(Weapon.objects.values())
+    def userVerifier(request):
+        token = request.COOKIES.get('jwt')
+        if token == None:
+            return False
+        try:
+            payload = jwt.decode(token, 'secret', algorithms=['HS256'])
+        except jwt.ExpiredSignatureError:
+            return JsonResponse({'message':"Error: Unauthenticated..."})
 
-        if len(weapons) > 0:
-            return JsonResponse({'message':"Success",'weapons':weapons})
+        print(payload)
+        user = User.objects.filter(id=payload['id']).first()
+        print(user.password)
+        #if user
+        print(user)
+        serializer = UserSerializer(user)
+        return Response(serializer.data)
+
+    def get(self, request, id=0, command=NULL):             #https://github.com/scalablescripts/django-auth/tree/main/users
+        if not WeaponView.userVerifier(request):
+            return JsonResponse({'message':"Error: Unauthenticated..."})
         else:
-            return JsonResponse({'message':"Error: weapon not found..."})
+            if id > 0:      ##GET BY ID
+                weapons=list(Weapon.objects.filter(id=id).values())
+            elif command is not NULL:
+                weapons=list(Weapon.objects.filter(command=command).values())
+            else:           ##GET ALL
+                weapons=list(Weapon.objects.values())
+
+            if len(weapons) > 0:
+                return JsonResponse({'message':"Success",'weapons':weapons})
+            else:
+                return JsonResponse({'message':"Error: weapon not found..."})
 
     def post(self, request):
         data = json.loads(request.body)
