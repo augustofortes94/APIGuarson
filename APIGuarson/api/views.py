@@ -1,24 +1,19 @@
-import json
+from .forms import UserRegisterForm
+from .serializers import UserSerializer
+from .models import Weapon
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.utils.decorators import method_decorator
 from django.views import View
-from django.views.generic import CreateView
 from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
-from django.contrib import messages
-
-from django.views import View
+from django.views.generic import CreateView
 from pymysql import NULL
-from .models import Weapon
-from .forms import UserRegisterForm
-from rest_framework.views import APIView
 from rest_framework.response import Response
-from .serializers import UserSerializer
-import jwt, datetime
-
-import json
+from rest_framework.views import APIView
+import json, jwt, datetime
 
 # Create your views here.
 
@@ -218,26 +213,35 @@ class WeaponView(View):
                 return JsonResponse({'message':"Error: weapon not found..."})
 
     def post(self, request):
-        data = json.loads(request.body)
-        if len(list(Weapon.objects.filter(command=data['command']).values())) > 0:
-            return JsonResponse({'message':"Error: this weapon already exist"})
+        if not WeaponView.userVerifier(request):
+            return JsonResponse({'message':"Error: Unauthenticated..."})
         else:
-            WeaponView.add(request, data)
-            return JsonResponse({'message':"Success"})
+            data = json.loads(request.body)
+            if len(list(Weapon.objects.filter(command=data['command']).values())) > 0:
+                return JsonResponse({'message':"Error: this weapon already exist"})
+            else:
+                WeaponView.add(request, data)
+                return JsonResponse({'message':"Success"})
     
     def put(self, request, id):
-        data = json.loads(request.body)
-        weapons=list(Weapon.objects.filter(id=id).values())
-        if len(weapons) > 0:
-            WeaponView.edit(request, data, id)
-            return JsonResponse({'message':"Success"})
+        if not WeaponView.userVerifier(request):
+            return JsonResponse({'message':"Error: Unauthenticated..."})
         else:
-            return JsonResponse({'message':"Error: weapon not found..."})
+            data = json.loads(request.body)
+            weapons=list(Weapon.objects.filter(id=id).values())
+            if len(weapons) > 0:
+                WeaponView.edit(request, data, id)
+                return JsonResponse({'message':"Success"})
+            else:
+                return JsonResponse({'message':"Error: weapon not found..."})
     
-    def delete(request, self, id):
-        weapons=list(Weapon.objects.filter(id=id).values())
-        if len(weapons) > 0:
-            Weapon.objects.filter(id=id).delete()
-            return JsonResponse({'message':"Success",'weapons':weapons})
+    def delete(self, request, id):
+        if not WeaponView.userVerifier(request):
+            return JsonResponse({'message':"Error: Unauthenticated..."})
         else:
-            return JsonResponse({'message':"Error: weapon not found..."})
+            weapons=list(Weapon.objects.filter(id=id).values())
+            if len(weapons) > 0:
+                Weapon.objects.filter(id=id).delete()
+                return JsonResponse({'message':"Success",'weapons':weapons})
+            else:
+                return JsonResponse({'message':"Error: weapon not found..."})
