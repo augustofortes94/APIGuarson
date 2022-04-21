@@ -40,7 +40,6 @@ class ApiLogin(APIView):
             'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=60),
             'iat': datetime.datetime.utcnow()
             }
-
             token = jwt.encode(payload, 'secret', algorithm='HS256')
 
             response = Response()
@@ -194,19 +193,15 @@ class WeaponView(View):
         if token == None:
             return False
         try:
-            payload = jwt.decode(token, 'secret', algorithms=['HS256'])
-        except jwt.ExpiredSignatureError:
-            return JsonResponse({'message':"Error: Unauthenticated..."})
+            payload = jwt.decode(token, 'secret', algorithms=['HS256'])     #if the token can be decoded, it is a valid token
+        except Exception: #jwt.ExpiredSignatureError:
+            return False    #if the token is expired or something else, refuse
 
-        print(payload)
         user = User.objects.filter(id=payload['id']).first()
-        print(user.password)
-        #if user
-        print(user)
         serializer = UserSerializer(user)
         return Response(serializer.data)
 
-    def get(self, request, id=0, command=NULL):             #https://github.com/scalablescripts/django-auth/tree/main/users
+    def get(self, request, id=0, command=NULL):
         if not WeaponView.userVerifier(request):
             return JsonResponse({'message':"Error: Unauthenticated..."})
         else:
