@@ -39,7 +39,7 @@ class ApiLogin(APIView):
 
             response = Response()
             response.set_cookie(key='jwt', value=token, httponly=True)
-            response.data = {'jwt': token}
+            response.data = {'message': "Succes"}
             return response
 
 class RegisterUser(CreateView):
