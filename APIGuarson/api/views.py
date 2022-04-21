@@ -42,6 +42,19 @@ class ApiLogin(APIView):
             response.data = {'message': "Succes"}
             return response
 
+    def userVerifier(request):
+        token = request.COOKIES.get('jwt')
+        if token == None:
+            return False
+        try:
+            payload = jwt.decode(token, 'secret', algorithms=['HS256'])     #if the token can be decoded, it is a valid token
+        except Exception: #jwt.ExpiredSignatureError:
+            return False    #if the token is expired or something else, refuse
+
+        user = User.objects.filter(id=payload['id']).first()
+        serializer = UserSerializer(user)
+        return Response(serializer.data)
+
 class RegisterUser(CreateView):
     def register(request):
         if request.method == 'POST':
@@ -132,7 +145,6 @@ class WeaponView(View):
             else:
                 data[key] = request.POST[key]
         data = json.loads(json.dumps(data))
-        print(request.POST)
         WeaponView.add(request, data)
         messages.success(request, data['name'] + ' ha sido creada')
         return redirect('/weapon/list')
@@ -179,25 +191,13 @@ class WeaponView(View):
         weapons=list(Weapon.objects.values())
         return render(request, 'crud_weapons/weapons_list.html', {"weapons": weapons})
 
+class WeaponApi(View):
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
 
-    def userVerifier(request):
-        token = request.COOKIES.get('jwt')
-        if token == None:
-            return False
-        try:
-            payload = jwt.decode(token, 'secret', algorithms=['HS256'])     #if the token can be decoded, it is a valid token
-        except Exception: #jwt.ExpiredSignatureError:
-            return False    #if the token is expired or something else, refuse
-
-        user = User.objects.filter(id=payload['id']).first()
-        serializer = UserSerializer(user)
-        return Response(serializer.data)
-
     def get(self, request, id=0, command=NULL):
-        if not WeaponView.userVerifier(request):
+        if not ApiLogin.userVerifier(request):
             return JsonResponse({'message':"Error: Unauthenticated..."})
         else:
             if id > 0:      ##GET BY ID
@@ -213,30 +213,64 @@ class WeaponView(View):
                 return JsonResponse({'message':"Error: weapon not found..."})
 
     def post(self, request):
-        if not WeaponView.userVerifier(request):
+        if not ApiLogin.userVerifier(request):
             return JsonResponse({'message':"Error: Unauthenticated..."})
         else:
             data = json.loads(request.body)
             if len(list(Weapon.objects.filter(command=data['command']).values())) > 0:
                 return JsonResponse({'message':"Error: this weapon already exist"})
             else:
-                WeaponView.add(request, data)
+                Weapon.objects.create(
+                    command=data['command'],
+                    category=data['category'],
+                    name=data['name'],
+                    muzzle=data['muzzle'],
+                    barrel=data['barrel'],
+                    laser=data['laser'],
+                    optic=data['optic'],
+                    stock=data['stock'],
+                    underbarrel=data['underbarrel'],
+                    magazine=data['magazine'],
+                    ammunition=data['ammunition'],
+                    reargrip=data['reargrip'],
+                    perk=data['perk'],
+                    perk2=data['perk2'],
+                    alternative=data['alternative'],
+                    alternative2=data['alternative2']
+                )
                 return JsonResponse({'message':"Success"})
     
-    def put(self, request, id):
-        if not WeaponView.userVerifier(request):
+    def put(self, request):
+        if not ApiLogin.userVerifier(request):
             return JsonResponse({'message':"Error: Unauthenticated..."})
         else:
             data = json.loads(request.body)
-            weapons=list(Weapon.objects.filter(id=id).values())
+            weapons=list(Weapon.objects.filter(command=data['command']).values())
             if len(weapons) > 0:
-                WeaponView.edit(request, data, id)
+                weapon=Weapon.objects.get(command=data['command'])
+                weapon.command= data['command']
+                weapon.category=data['category']
+                weapon.name= data['name']
+                weapon.muzzle= data['muzzle']
+                weapon.barrel= data['barrel']
+                weapon.laser= data['laser']
+                weapon.optic= data['optic']
+                weapon.stock= data['stock']
+                weapon.underbarrel= data['underbarrel']
+                weapon.magazine= data['magazine']
+                weapon.ammunition= data['ammunition']
+                weapon.reargrip= data['reargrip']
+                weapon.perk= data['perk']
+                weapon.perk2= data['perk2']
+                weapon.alternative= data['alternative']
+                weapon.alternative2= data['alternative2']
+                weapon.save()
                 return JsonResponse({'message':"Success"})
             else:
                 return JsonResponse({'message':"Error: weapon not found..."})
     
     def delete(self, request, id):
-        if not WeaponView.userVerifier(request):
+        if not ApiLogin.userVerifier(request):
             return JsonResponse({'message':"Error: Unauthenticated..."})
         else:
             weapons=list(Weapon.objects.filter(id=id).values())
