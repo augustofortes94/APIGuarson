@@ -4,12 +4,13 @@ from .models import Weapon
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.core.paginator import Paginator
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import CreateView
+from django.views.generic import CreateView, ListView
 from pymysql import NULL
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -91,7 +92,7 @@ class HomeView(View):
     def homeview(request):
         return redirect('/weapon/list')
 
-class WeaponView(View):
+class WeaponView(ListView):
     @login_required
     def add(request, data):
         Weapon.objects.create(
@@ -188,8 +189,12 @@ class WeaponView(View):
         return redirect('/weapon/list')
 
     def weaponList(request):
-        weapons=list(Weapon.objects.values())
-        return render(request, 'crud_weapons/weapons_list.html', {"weapons": weapons})
+        weapons=Weapon.objects.all().order_by('command')
+        paginator = Paginator(weapons, 12)
+
+        page_number= request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        return render(request, 'crud_weapons/weapons_list.html', {'page_obj': page_obj})
 
 class WeaponApi(View):
     @method_decorator(csrf_exempt)
