@@ -146,8 +146,11 @@ class WeaponView(ListView):
             else:
                 data[key] = request.POST[key]
         data = json.loads(json.dumps(data))
-        WeaponView.add(request, data)
-        messages.success(request, data['name'] + ' ha sido creada')
+        if len(list(Weapon.objects.filter(command=data['command']).values())) > 0:
+            messages.warning(request, data['command'] + ' ya existe')
+        else:
+            WeaponView.add(request, data)
+            messages.success(request, data['name'] + ' ha sido creada')
         return redirect('/weapon/list')
 
     @login_required
