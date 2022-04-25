@@ -135,6 +135,16 @@ class WeaponView(ListView):
         weapon.alternative2= data['alternative2']
         weapon.save()
 
+    """def search(request):
+        if request.method == 'GET': # this will be GET now      
+            weapon =  request.GET.get('search') # do some research what it does       
+            try:
+                status = Weapon.objects.filter(name=weapon) # filter returns a list so you might consider skip except part
+            return render(request,"search.html",{"books":status})
+        else:
+            return render(request,"search.html",{})
+            """
+
     @login_required
     def weaponAdd(request):
         data = {}
@@ -191,8 +201,12 @@ class WeaponView(ListView):
         messages.success(request, data['name'] + ' ha sido modificada')
         return redirect('/weapon/list')
 
-    def weaponList(request):
-        weapons=Weapon.objects.all().order_by('command')
+    def weaponList(request, name=NULL):
+        if name != NULL:
+            weapons=Weapon.objects.filter(name=name).all()
+        else:
+            weapons=Weapon.objects.all().order_by('command')
+        
         paginator = Paginator(weapons, 12)
 
         page_number= request.GET.get('page')
