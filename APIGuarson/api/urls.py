@@ -20,11 +20,11 @@ urlpatterns=[
 
     #WEAPONS
     path('weapon/list', WeaponView.weaponList, name='weapons_list'),
+    #path('weapon/search', WeaponView.weaponSearch, name='weapons_search'),
     path('weapon/add', WeaponView.weaponAdd, name='weapon_add'),
     path('weapon/addform', WeaponView.weaponAddForm, name='weapon_addform'),
     path('weapon/delete/<int:id>', WeaponView.weaponDelete, name='weapon_delete_by_id'),
     path('weapon/edition/<int:id>', WeaponView.weaponEdition, name='weapon_editition'),
     path('weapon/edit/<str:command>', WeaponView.weaponEdit, name='weapon_edit'),
-    #path('weapon/search/<str:command>', WeaponView.search, name='weapon_search'),
     path('weapon/<str:command>', WeaponView.weaponDetail, name='weapon_by_command'),
 ]
