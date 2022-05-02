@@ -14,40 +14,45 @@
 <body>
     <header class="site-header">
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
-          <div class="container">
-            
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="navbar-nav d-flex justify-content-left w-50" id="navbarToggle">
+            <div class="container">
                 <a class="navbar-brand mr-4 text-warning" href="https://cutt.ly/3F1gClO">Guarson App</a>
-                <div class="navbar-nav mr-auto">
-                    <a class="nav-item nav-link" href="/weapon/list"><i class="fa-solid fa-house"></i></a>
-                    {% if request.user.is_superuser %}
-                        <a class="nav-item nav-link" href="/user/list"><i class="fa-solid fa-user-pen"></i></a>
-                    {% endif %}
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0 w-100">
+                        <li class="nav-item">
+                            <a class="nav-item nav-link" href="/weapon/list"><i class="fa-solid fa-house"></i></a>  <!-- Home -->
+                        </li>
+                        <li class="nav-item w-25">
+                            {% if request.user.is_superuser %}
+                                <a class="nav-item nav-link" href="/user/list"><i class="fa-solid fa-user-pen"></i></a> <!-- Edit users -->
+                            {% endif %}
+                        </li>
+                        <li class="nav-item d-flex justify-content w-75">
+                            <form class="d-flex justify-content-end w-50" action="/weapon/list" method="POST">{% csrf_token %}
+                                <input class="form-control mr-sm-2" name="searched" type="text" placeholder="Search" aria-label="Search" style="display: inline;">
+                                <button type="submit" class="btn btn-secondary" style="display: inline;"><i class="fas fa-search"></i></button>
+                            </form>
+                        </li>
+                        {% if request.user.is_authenticated %}
+                            <li class="nav-item d-flex justify-content">
+                                <a class="nav-item nav-link">{{ request.user }}</a> <!-- Username -->
+                            </li>
+                            <li class="nav-item d-flex justify-content">
+                                <a class="nav-item nav-link" href="/accounts/logout" title="Logout"><i class="fa-solid fa-right-from-bracket"></i></a>  <!-- Logout -->
+                            </li>
+                        {% else %}
+                            <li class="nav-item d-flex justify-content">
+                                <a class="nav-item nav-link" href="/accounts/login" title="Login">Login</a> <!-- Login -->
+                            </li>
+                            <li class="nav-item d-flex justify-content">
+                                <a class="nav-item nav-link" href="/register" title="Register">Register</a> <!-- Register -->
+                            </li>
+                        {% endif %}
+                    </ul>
                 </div>
             </div>
-              <!-- Navbar Right Side -->
-            <div class="navbar-nav d-flex justify-content-left w-50">
-                <!--  Search Bar  -->
-                <div class="d-flex justify-content-end w-75">
-                    <form class="d-flex justify-content-end w-50" action="/weapon/list" method="POST">{% csrf_token %}
-                        <input class="form-control mr-sm-2" name="searched" type="text" placeholder="Search" aria-label="Search" style="display: inline;">
-                        <button type="submit" class="btn btn-secondary" style="display: inline;"><i class="fas fa-search"></i></button>
-                    </form>
-                </div>
-                <div class="d-flex justify-content-right w-25">
-                    {% if request.user.is_authenticated %}
-                        <a class="nav-item nav-link">{{ request.user }}</a>
-                        <a class="nav-item nav-link" href="/accounts/logout"><i class="fa-solid fa-right-from-bracket"></i></a>
-                    {% else %}
-                        <a class="nav-item nav-link" href="/accounts/login">Login</a>
-                        <a class="nav-item nav-link" href="/register">Register</a>
-                    {% endif %}
-                </div>
-            </div>
-          </div>
         </nav>
     </header>
     <div>
