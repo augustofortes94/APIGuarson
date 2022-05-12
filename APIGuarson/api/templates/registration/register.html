@@ -4,10 +4,8 @@
 {% block title %}Register{% endblock %}
 
 {% block body %}
-
-
     <div class="d-flex justify-content-center py-2">
-        <form class="form-signin w-50" method="POST">{% csrf_token %}
+        <form class="form-signin w-75" method="POST">{% csrf_token %}
             <h1 class="h3 mb-3 fw-normal">Register</h1>
             <input type="hidden" name="csrf_token" value="">
             {{ form|crispy }}
