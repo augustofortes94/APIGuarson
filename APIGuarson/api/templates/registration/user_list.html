@@ -2,7 +2,6 @@
 
 {% block title %} Users List {% endblock %}
 
-
 {% block body %}
     <h4 class="text-center">Users</h4>
     <div class="d-flex justify-content-center py-2">
@@ -11,7 +10,7 @@
                 <th class="text-center">Username</th>
                 <th class="text-center">Nombre</th>
                 <th class="text-center">Email</th>
-                <th class="text-center">Superusuario</th>
+                <th class="text-center">Staff</th>
                 <th class="text-center">Opciones</th>
             </tr>
             {% for user in users %}
@@ -19,14 +18,39 @@
                 <td class="text-center">{{ user.username }}</td>
                 <td class="text-center">{{ user.first_name }}</td>
                 <td class="text-center">{{ user.email }}</td>
-                <td class="text-center">{{ user.is_superuser }}</td>
+                <td class="text-center">
+                    <div class="form-check form-switch">
+                        {% if user.is_superuser != True %}
+                                {% if user.is_staff == True %}
+                                    <input class="form-check-input" type="checkbox" id="staffcheckbox" checked>
+                                {% else %}
+                                    <input class="form-check-input" type="checkbox" id="staffcheckbox">
+                                {% endif %}
+                        {% else %}
+                                <input class="form-check-input" type="checkbox" id="staffcheckbox" checked disabled>
+                        {% endif %}
+                    </div>
+                </td>
                 <td class="text-center">
                     {% if user.is_superuser != True %}
-                        <a class="btn btn-danger ms-3" href="/user/delete/{{ user.id }}">Delete</a>
+                        <a class="btn" href="/user/delete/{{ user.id }}"><i class="fa-regular fa-trash-can"></i></a>   <!-- Delete -->
                     {% endif %}
                 </td>
             </tr>
             {% endfor %}
         </table>
     </div>
+
+<script>
+    
+    const checkbox = document.querySelector("input[type='checkbox']");
+
+    checkbox.addEventListener('change', (event) => {
+        if (event.currentTarget.checked) {
+            alert('checked');
+        } else {
+            alert('not checked');
+        }
+    })
+</script>
 {% endblock %}

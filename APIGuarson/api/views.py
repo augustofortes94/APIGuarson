@@ -70,6 +70,15 @@ class RegisterUser(CreateView):
         return render(request, 'registration/register.html', {'form':form})
 
     @login_required
+    def userEditForm(request, id):
+        if request.user.is_superuser == True:
+            users=User.objects.filter(id=id)
+            return render(request, 'registration/user_list.html', {"users":users})
+        else:
+            messages.warning(request, 'Solo el superusuario puede acceder a esta vista')
+            return redirect('/weapon/list')
+
+    @login_required
     def userList(request):
         if request.user.is_superuser == True:
             users=list(User.objects.values())
