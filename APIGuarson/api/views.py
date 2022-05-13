@@ -193,8 +193,7 @@ class WeaponView(ListView):
 
     def weaponList(request):
         if request.method == "POST":
-            print(request.POST['searched'])
-            weapons=Weapon.objects.filter(command=request.POST['searched']).all()
+            weapons=Weapon.objects.filter(name__icontains=request.POST['searched']).order_by('command')
         else:
             weapons=Weapon.objects.all().order_by('command')
         

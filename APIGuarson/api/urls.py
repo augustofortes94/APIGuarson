@@ -1,7 +1,6 @@
 from xml.etree.ElementInclude import include
 from django.urls import path, include
 from .views import ApiLogin, HomeView, RegisterUser, WeaponApi, WeaponView
-from django.contrib.auth import views as auth_views
 
 urlpatterns=[
     path('', HomeView.homeview),
@@ -20,7 +19,6 @@ urlpatterns=[
 
     #WEAPONS
     path('weapon/list', WeaponView.weaponList, name='weapons_list'),
-    #path('weapon/search', WeaponView.weaponSearch, name='weapons_search'),
     path('weapon/add', WeaponView.weaponAdd, name='weapon_add'),
     path('weapon/addform', WeaponView.weaponAddForm, name='weapon_addform'),
     path('weapon/delete/<int:id>', WeaponView.weaponDelete, name='weapon_delete_by_id'),
