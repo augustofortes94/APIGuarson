@@ -1,3 +1,4 @@
+from itertools import count
 from .forms import UserRegisterForm
 from .serializers import UserSerializer
 from .models import Weapon
@@ -77,11 +78,23 @@ class RegisterUser(CreateView):
         else:
             messages.warning(request, 'Solo el superusuario puede acceder a esta vista')
             return redirect('/weapon/list')
+    
+    @login_required
+    def userEdit(request):
+        print(request.POST)
+        print(len(request.POST))
+        user= User.objects.get(id=int(request.POST['userid']))
+        if len(request.POST) == 2:
+            user.is_staff = False
+        else:
+            user.is_staff = True
+        user.save()
+        return redirect('/user/list')
 
     @login_required
     def userList(request):
         if request.user.is_superuser == True:
-            users=list(User.objects.values())
+            users=list(User.objects.all().order_by('username'))
             return render(request, 'registration/user_list.html', {"users":users})
         else:
             messages.warning(request, 'Solo el superusuario puede acceder a esta vista')
