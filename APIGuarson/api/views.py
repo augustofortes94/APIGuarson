@@ -80,10 +80,8 @@ class RegisterUser(CreateView):
             return redirect('/weapon/list')
     
     @login_required
-    def userEdit(request):
-        print(request.POST)
-        print(len(request.POST))
-        user= User.objects.get(id=int(request.POST['userid']))
+    def userEdit(request, id):
+        user= User.objects.get(id=id)
         if len(request.POST) == 2:
             user.is_staff = False
         else:

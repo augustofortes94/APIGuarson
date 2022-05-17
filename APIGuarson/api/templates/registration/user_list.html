@@ -15,31 +15,31 @@
                 <th class="text-center">Opciones</th>
             </tr>
             {% for user in users %}
-            <tr>
-                <td class="text-center">{{ user.username }}</td>
-                <td class="text-center">{{ user.first_name }}</td>
-                <td class="text-center">{{ user.email }}</td>
-                <td class="text-center">
-                    <form class="w-100" id="jsform" action="/user/edit" method="POST">{% csrf_token %}
-                        <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" onchange="myfunction()" name="check{{ user.id }}" {% if user.is_staff == True %} checked {% endif %}>
-                            <input type="hidden" value="{{ user.id }}" name="userid">
-                        </div>
-                    </form>
-                </td>
-                <td class="text-center">
-                    {% if user.is_superuser != True %}
-                        <a class="btn" href="/user/delete/{{ user.id }}"><i class="fa-regular fa-trash-can"></i></a>   <!-- Delete -->
-                    {% endif %}
-                </td>
-            </tr>
+                <tr>
+                    <td class="text-center">{{ user.username }}</td>
+                    <td class="text-center">{{ user.first_name }}</td>
+                    <td class="text-center">{{ user.email }}</td>
+                    <td class="text-center">{{ user.id }}
+                        <form class="w-100" id="jsform{{ user.id }}" action="/user/edit/{{ user.id }}" method="POST" name="edit-user">{% csrf_token %}
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" onchange="myfunction('{{ user.id }}')" name="check" {% if user.is_staff == True %} checked {% endif %}>
+                                <input type="hidden" value="true" name="userid">
+                            </div>
+                        </form>
+                    </td>
+                    <td class="text-center">
+                        {% if user.is_superuser != True %}
+                            <a class="btn" href="/user/delete/{{ user.id }}"><i class="fa-regular fa-trash-can"></i></a>   <!-- Delete -->
+                        {% endif %}
+                    </td>
+                </tr>
             {% endfor %}
         </table>
     </div>
 
 <script>
-    function myfunction(){
-        document.getElementById('jsform').submit();
+    function myfunction(id){
+        document.getElementById('jsform'.concat('', id)).submit();
     }
 </script>
 {% endblock %}
