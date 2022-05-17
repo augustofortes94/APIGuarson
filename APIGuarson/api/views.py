@@ -1,12 +1,12 @@
-from itertools import count
 from .forms import UserRegisterForm
 from .serializers import UserSerializer
 from .models import Weapon
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from .decorators import staff_required, superuser_required
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
-from django.http import HttpResponse, JsonResponse
+from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.utils.decorators import method_decorator
 from django.views import View
@@ -69,25 +69,20 @@ class RegisterUser(CreateView):
         else:
             form = UserRegisterForm()
         return render(request, 'registration/register.html', {'form':form})
-
-    @login_required
-    def userEditForm(request, id):
-        if request.user.is_superuser == True:
-            users=User.objects.filter(id=id)
-            return render(request, 'registration/user_list.html', {"users":users})
-        else:
-            messages.warning(request, 'Solo el superusuario puede acceder a esta vista')
-            return redirect('/weapon/list')
     
     @login_required
     def userEdit(request, id):
-        user= User.objects.get(id=id)
-        if len(request.POST) == 2:
-            user.is_staff = False
+        if request.user.is_superuser == True:
+            user= User.objects.get(id=id)
+            if len(request.POST) == 2:
+                user.is_staff = False
+            else:
+                user.is_staff = True
+            user.save()
+            return redirect('/user/list')
         else:
-            user.is_staff = True
-        user.save()
-        return redirect('/user/list')
+            messages.warning(request, 'Solo el superusuario puede acceder a esta funcion')
+            return redirect('/weapon/list')
 
     @login_required
     def userList(request):
@@ -174,6 +169,7 @@ class WeaponView(ListView):
         return redirect('/weapon/list')
 
     @login_required
+    #@staff_required
     def weaponAddForm(request):
         return render(request, 'crud_weapons/weapon_add.html')
 
@@ -192,6 +188,7 @@ class WeaponView(ListView):
         return render(request, 'crud_weapons/weapon_detail.html', {"weapon": weapon})
 
     @login_required
+    #@superuser_required
     def weaponEdit(request, command):
         weapon=Weapon.objects.filter(command=command).first()
         return render(request, 'crud_weapons/weapon_edit.html', {"weapon": weapon})
@@ -210,7 +207,7 @@ class WeaponView(ListView):
         WeaponView.edit(request, data, id)
         messages.success(request, data['name'] + ' ha sido modificada')
         return redirect('/weapon/list')
-
+    
     def weaponList(request):
         if request.method == "POST":
             weapons=Weapon.objects.filter(name__icontains=request.POST['searched']).order_by('command')
