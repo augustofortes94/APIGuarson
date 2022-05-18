@@ -3,7 +3,7 @@ from .serializers import UserSerializer
 from .models import Weapon
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .decorators import staff_required, superuser_required
+from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
 from django.http import JsonResponse
@@ -16,6 +16,8 @@ from pymysql import NULL
 from rest_framework.response import Response
 from rest_framework.views import APIView
 import json, jwt, datetime
+
+from django.contrib.auth.decorators import user_passes_test
 
 # Create your views here.
 
@@ -71,29 +73,24 @@ class RegisterUser(CreateView):
         return render(request, 'registration/register.html', {'form':form})
     
     @login_required
+    @user_passes_test(lambda u: u.is_superuser)
     def userEdit(request, id):
-        if request.user.is_superuser == True:
-            user= User.objects.get(id=id)
-            if len(request.POST) == 2:
-                user.is_staff = False
-            else:
-                user.is_staff = True
-            user.save()
-            return redirect('/user/list')
+        user= User.objects.get(id=id)
+        if len(request.POST) == 2:
+            user.is_staff = False
         else:
-            messages.warning(request, 'Solo el superusuario puede acceder a esta funcion')
-            return redirect('/weapon/list')
+            user.is_staff = True
+        user.save()
+        return redirect('/user/list')
 
     @login_required
+    @user_passes_test(lambda u: u.is_superuser)
     def userList(request):
-        if request.user.is_superuser == True:
-            users=list(User.objects.all().order_by('username'))
-            return render(request, 'registration/user_list.html', {"users":users})
-        else:
-            messages.warning(request, 'Solo el superusuario puede acceder a esta vista')
-            return redirect('/weapon/list')
+        users=list(User.objects.all().order_by('username'))
+        return render(request, 'registration/user_list.html', {"users":users})
 
     @login_required
+    @user_passes_test(lambda u: u.is_superuser)
     def userDelete(request, id):
         user=User.objects.get(id=id)
         if user.is_superuser == True:
@@ -109,6 +106,7 @@ class HomeView(View):
 
 class WeaponView(ListView):
     @login_required
+    @user_passes_test(lambda u: u.is_staff)
     def add(request, data):
         Weapon.objects.create(
             command=data['command'],
@@ -130,6 +128,7 @@ class WeaponView(ListView):
         )
     
     @login_required
+    @user_passes_test(lambda u: u.is_staff)
     def edit(request, data, id):
         weapon=Weapon.objects.get(id=id)
         weapon.command= data['command']
@@ -151,6 +150,7 @@ class WeaponView(ListView):
         weapon.save()
 
     @login_required
+    @user_passes_test(lambda u: u.is_staff)
     def weaponAdd(request):
         data = {}
         for key in request.POST:
@@ -169,18 +169,16 @@ class WeaponView(ListView):
         return redirect('/weapon/list')
 
     @login_required
-    #@staff_required
+    @user_passes_test(lambda u: u.is_staff)
     def weaponAddForm(request):
         return render(request, 'crud_weapons/weapon_add.html')
 
     @login_required
+    @user_passes_test(lambda u: u.is_superuser)
     def weaponDelete(request, id):
-        if request.user.is_superuser == True:
-            weapon=Weapon.objects.get(id=id)
-            Weapon.objects.filter(id=id).delete()
-            messages.success(request,  weapon.name + ' ha sido eliminada')
-        else:
-            messages.warning(request,  'Solo el superusuario puede eliminar')
+        weapon=Weapon.objects.get(id=id)
+        Weapon.objects.filter(id=id).delete()
+        messages.success(request,  weapon.name + ' ha sido eliminada')
         return redirect('/weapon/list')
 
     def weaponDetail(request, command):
@@ -188,12 +186,13 @@ class WeaponView(ListView):
         return render(request, 'crud_weapons/weapon_detail.html', {"weapon": weapon})
 
     @login_required
-    #@superuser_required
+    @user_passes_test(lambda u: u.is_staff)
     def weaponEdit(request, command):
         weapon=Weapon.objects.filter(command=command).first()
         return render(request, 'crud_weapons/weapon_edit.html', {"weapon": weapon})
 
     @login_required
+    @user_passes_test(lambda u: u.is_staff)
     def weaponEdition(request, id):
         data = {}
         for key in request.POST:

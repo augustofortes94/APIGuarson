@@ -1,6 +1,6 @@
 {% extends "../layout.html" %}
 
-{% block title %} Weapons List {% endblock %}
+{% block title %} Guarson App {% endblock %}
 
 
 {% block body %}
@@ -13,7 +13,7 @@
                     <th class="text-center">Armas</th>
                     <th class="text-center">Comandos</th>
                     <th class="text-center">Categorias</th>
-                    {% if request.user.is_authenticated %}
+                    {% if request.user.is_staff %}
                         <th class="text-center">Opciones</th>
                     {% endif %}
                 </tr>
@@ -22,7 +22,7 @@
                     <td class="text-center">{{ weapon.name }}</td>
                     <td class="text-center"><a class="btn btn-link" href="/weapon/{{ weapon.command }}">/{{ weapon.command }}</a></td>
                     <td class="text-center">{{ weapon.category }}</td>
-                    {% if request.user.is_authenticated %}
+                    {% if request.user.is_staff %}
                         <td class="text-center">
                             <a class="btn" href="/weapon/edit/{{ weapon.command }}"><i class="fa-regular fa-pen-to-square"></i></a>
                             {% if request.user.is_superuser %}
@@ -51,8 +51,10 @@
                 {% endif %}
             </span>
         </div>
-        <div class="d-grid gap-2 col-1 mx-auto">
-            <a class="btn btn-warning" href="/weapon/addform">Add</a>
-        </div>
+        {% if request.user.is_staff %}
+            <div class="d-grid gap-2 col-1 mx-auto">
+                <a class="btn btn-warning" href="/weapon/addform">Add</a>
+            </div>
+        {% endif %}
     </div>
 {% endblock %}
