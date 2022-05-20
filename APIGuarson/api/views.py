@@ -19,8 +19,6 @@ import json, jwt, datetime
 
 from django.contrib.auth.decorators import user_passes_test
 
-# Create your views here.
-
 class ApiLogin(APIView):
     def post(self, request):
         username = request.data['username']
