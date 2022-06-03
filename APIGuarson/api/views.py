@@ -1,5 +1,5 @@
 from .forms import UserRegisterForm
-from .serializers import UserSerializer
+from .serializers import UserSerializer, WeaponSerializer
 from .models import Weapon
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -244,7 +244,7 @@ class WeaponApi(View):
         if len(list(Weapon.objects.filter(command=data['command']).values())) > 0:
             return JsonResponse({'message':"Error: this weapon already exist"})
         else:
-            Weapon.objects.create(
+            weapon = Weapon.objects.create(
                 command=data['command'],
                 category=data['category'],
                 name=data['name'],
@@ -262,7 +262,9 @@ class WeaponApi(View):
                 alternative=data['alternative'],
                 alternative2=data['alternative2']
             )
-            return JsonResponse({'message':"Success"})
+            serializer = WeaponSerializer(data=vars(weapon))
+            serializer.is_valid(raise_exception=True)
+            return JsonResponse({'message':"Success", 'weapons':serializer.data})
     
     @api_login_required
     def put(self, request, *args, **kwargs):
@@ -287,7 +289,9 @@ class WeaponApi(View):
             weapon.alternative= data['alternative']
             weapon.alternative2= data['alternative2']
             weapon.save()
-            return JsonResponse({'message':"Success"})
+            serializer = WeaponSerializer(data=vars(weapon))
+            serializer.is_valid(raise_exception=True)
+            return JsonResponse({'message':"Success", 'weapons':serializer.data})
         else:
             return JsonResponse({'message':"Error: weapon not found..."})
     
