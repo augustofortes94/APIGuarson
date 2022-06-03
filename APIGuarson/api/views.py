@@ -1,5 +1,5 @@
 from .forms import UserRegisterForm
-from .serializers import UserSerializer, WeaponSerializer
+from .serializers import WeaponSerializer
 from .models import Weapon
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
