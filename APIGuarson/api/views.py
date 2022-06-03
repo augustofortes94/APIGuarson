@@ -3,7 +3,6 @@ from .serializers import UserSerializer
 from .models import Weapon
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
 from django.http import JsonResponse
@@ -16,6 +15,7 @@ from pymysql import NULL
 from rest_framework.response import Response
 from rest_framework.views import APIView
 import json, jwt, datetime
+from .decorators import api_login_required
 
 from django.contrib.auth.decorators import user_passes_test
 
@@ -44,6 +44,7 @@ class ApiLogin(APIView):
             response.data = {'message': "Succes"}
             return response
 
+    """
     def userVerifier(request):
         token = request.COOKIES.get('jwt')
         if token == None:
@@ -56,6 +57,7 @@ class ApiLogin(APIView):
         user = User.objects.filter(id=payload['id']).first()
         serializer = UserSerializer(user)
         return Response(serializer.data)
+    """
 
 class RegisterUser(CreateView):
     def register(request):
@@ -222,86 +224,78 @@ class WeaponApi(View):
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
 
-    def get(self, request, id=0, command=NULL):
-        if not ApiLogin.userVerifier(request):
-            return JsonResponse({'message':"Error: Unauthenticated..."})
-        else:
-            if id > 0:      ##GET BY ID
-                weapons=list(Weapon.objects.filter(id=id).values())
-            elif command is not NULL:
-                weapons=list(Weapon.objects.filter(command=command).values())
-            else:           ##GET ALL
-                weapons=list(Weapon.objects.values())
-
-            if len(weapons) > 0:
-                return JsonResponse({'message':"Success",'weapons':weapons})
-            else:
-                return JsonResponse({'message':"Error: weapon not found..."})
-
-    def post(self, request):
-        if not ApiLogin.userVerifier(request):
-            return JsonResponse({'message':"Error: Unauthenticated..."})
-        else:
-            data = json.loads(request.body)
-            if len(list(Weapon.objects.filter(command=data['command']).values())) > 0:
-                return JsonResponse({'message':"Error: this weapon already exist"})
-            else:
-                Weapon.objects.create(
-                    command=data['command'],
-                    category=data['category'],
-                    name=data['name'],
-                    muzzle=data['muzzle'],
-                    barrel=data['barrel'],
-                    laser=data['laser'],
-                    optic=data['optic'],
-                    stock=data['stock'],
-                    underbarrel=data['underbarrel'],
-                    magazine=data['magazine'],
-                    ammunition=data['ammunition'],
-                    reargrip=data['reargrip'],
-                    perk=data['perk'],
-                    perk2=data['perk2'],
-                    alternative=data['alternative'],
-                    alternative2=data['alternative2']
-                )
-                return JsonResponse({'message':"Success"})
-    
-    def put(self, request):
-        if not ApiLogin.userVerifier(request):
-            return JsonResponse({'message':"Error: Unauthenticated..."})
-        else:
-            data = json.loads(request.body)
-            weapons=list(Weapon.objects.filter(command=data['command']).values())
-            if len(weapons) > 0:
-                weapon=Weapon.objects.get(command=data['command'])
-                weapon.command= data['command']
-                weapon.category=data['category']
-                weapon.name= data['name']
-                weapon.muzzle= data['muzzle']
-                weapon.barrel= data['barrel']
-                weapon.laser= data['laser']
-                weapon.optic= data['optic']
-                weapon.stock= data['stock']
-                weapon.underbarrel= data['underbarrel']
-                weapon.magazine= data['magazine']
-                weapon.ammunition= data['ammunition']
-                weapon.reargrip= data['reargrip']
-                weapon.perk= data['perk']
-                weapon.perk2= data['perk2']
-                weapon.alternative= data['alternative']
-                weapon.alternative2= data['alternative2']
-                weapon.save()
-                return JsonResponse({'message':"Success"})
-            else:
-                return JsonResponse({'message':"Error: weapon not found..."})
-    
-    def delete(self, request, id):
-        if not ApiLogin.userVerifier(request):
-            return JsonResponse({'message':"Error: Unauthenticated..."})
-        else:
+    @api_login_required
+    def get(self, request, id=0, command=NULL, *args, **kwargs):
+        if id > 0:      ##GET BY ID
             weapons=list(Weapon.objects.filter(id=id).values())
-            if len(weapons) > 0:
-                Weapon.objects.filter(id=id).delete()
-                return JsonResponse({'message':"Success",'weapons':weapons})
-            else:
-                return JsonResponse({'message':"Error: weapon not found..."})
+        elif command is not NULL:
+            weapons=list(Weapon.objects.filter(command=command).values())
+        else:           ##GET ALL
+            weapons=list(Weapon.objects.values())
+
+        if len(weapons) > 0:
+            return JsonResponse({'message':"Success",'weapons':weapons})
+        else:
+            return JsonResponse({'message':"Error: weapon not found..."})
+
+    @api_login_required
+    def post(self, request, *args, **kwargs):
+        data = json.loads(request.body)
+        if len(list(Weapon.objects.filter(command=data['command']).values())) > 0:
+            return JsonResponse({'message':"Error: this weapon already exist"})
+        else:
+            Weapon.objects.create(
+                command=data['command'],
+                category=data['category'],
+                name=data['name'],
+                muzzle=data['muzzle'],
+                barrel=data['barrel'],
+                laser=data['laser'],
+                optic=data['optic'],
+                stock=data['stock'],
+                underbarrel=data['underbarrel'],
+                magazine=data['magazine'],
+                ammunition=data['ammunition'],
+                reargrip=data['reargrip'],
+                perk=data['perk'],
+                perk2=data['perk2'],
+                alternative=data['alternative'],
+                alternative2=data['alternative2']
+            )
+            return JsonResponse({'message':"Success"})
+    
+    @api_login_required
+    def put(self, request, *args, **kwargs):
+        data = json.loads(request.body)
+        weapons=list(Weapon.objects.filter(command=data['command']).values())
+        if len(weapons) > 0:
+            weapon=Weapon.objects.get(command=data['command'])
+            weapon.command= data['command']
+            weapon.category=data['category']
+            weapon.name= data['name']
+            weapon.muzzle= data['muzzle']
+            weapon.barrel= data['barrel']
+            weapon.laser= data['laser']
+            weapon.optic= data['optic']
+            weapon.stock= data['stock']
+            weapon.underbarrel= data['underbarrel']
+            weapon.magazine= data['magazine']
+            weapon.ammunition= data['ammunition']
+            weapon.reargrip= data['reargrip']
+            weapon.perk= data['perk']
+            weapon.perk2= data['perk2']
+            weapon.alternative= data['alternative']
+            weapon.alternative2= data['alternative2']
+            weapon.save()
+            return JsonResponse({'message':"Success"})
+        else:
+            return JsonResponse({'message':"Error: weapon not found..."})
+    
+    @api_login_required
+    def delete(self, request, id, *args, **kwargs):
+        weapons=list(Weapon.objects.filter(id=id).values())
+        if len(weapons) > 0:
+            Weapon.objects.filter(id=id).delete()
+            return JsonResponse({'message':"Success",'weapons':weapons})
+        else:
+            return JsonResponse({'message':"Error: weapon not found..."})
