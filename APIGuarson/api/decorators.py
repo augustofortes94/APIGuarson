@@ -12,5 +12,8 @@ def api_login_required(function):
             payload = jwt.decode(token, 'secret', algorithms=['HS256'])     #if the token can be decoded, it is a valid token
         except Exception: #jwt.ExpiredSignatureError:
             return JsonResponse({'message':"Error: Unauthenticated..."})    #if the token is expired or something else, refuse
-        return function(request, *args, **kwargs)
+        if payload:
+            return function(request, *args, **kwargs)
+        else:
+            return JsonResponse({'message':"Error: Unauthenticated..."})
     return wrap
