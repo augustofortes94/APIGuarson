@@ -20,6 +20,10 @@ from .decorators import api_login_required
 from django.contrib.auth.decorators import user_passes_test
 
 class ApiLogin(APIView):
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+        
     def post(self, request):
         username = request.data['username']
         password = request.data['password']
