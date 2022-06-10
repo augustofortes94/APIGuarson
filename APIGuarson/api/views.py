@@ -12,12 +12,15 @@ from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import CreateView, ListView
 from pymysql import NULL
+from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-import json, jwt, datetime
+import json
+import jwt
+import datetime
 from .decorators import api_login_required
-
 from django.contrib.auth.decorators import user_passes_test
+
 
 class ApiLogin(APIView):
     @method_decorator(csrf_exempt)
@@ -30,7 +33,7 @@ class ApiLogin(APIView):
 
         user = User.objects.filter(username=username).first()
         if user is None:
-            return JsonResponse({'message':"Error: user not found..."})
+            return Response({'message': "Error: user not found..."}, status=status.HTTP_404_NOT_FOUND)
 
         else:
             if not user.check_password(password):
@@ -48,20 +51,6 @@ class ApiLogin(APIView):
             response.data = {'message': "Succes"}
             return response
 
-    """
-    def userVerifier(request):
-        token = request.COOKIES.get('jwt')
-        if token == None:
-            return False
-        try:
-            payload = jwt.decode(token, 'secret', algorithms=['HS256'])     #if the token can be decoded, it is a valid token
-        except Exception: #jwt.ExpiredSignatureError:
-            return False    #if the token is expired or something else, refuse
-
-        user = User.objects.filter(id=payload['id']).first()
-        serializer = UserSerializer(user)
-        return Response(serializer.data)
-    """
 
 class RegisterUser(CreateView):
     def register(request):
@@ -74,12 +63,12 @@ class RegisterUser(CreateView):
                 return redirect('/weapon/list')
         else:
             form = UserRegisterForm()
-        return render(request, 'registration/register.html', {'form':form})
+        return render(request, 'registration/register.html', {'form': form})
     
     @login_required
     @user_passes_test(lambda u: u.is_superuser)
     def userEdit(request, id):
-        user= User.objects.get(id=id)
+        user = User.objects.get(id=id)
         if len(request.POST) == 2:
             user.is_staff = False
         else:
@@ -103,10 +92,12 @@ class RegisterUser(CreateView):
             User.objects.filter(id=id).delete()
         return redirect('/user/list')
 
+
 class HomeView(View):
     @login_required
     def homeview(request):
         return redirect('/weapon/list')
+
 
 class WeaponView(ListView):
     @login_required
@@ -135,22 +126,22 @@ class WeaponView(ListView):
     @user_passes_test(lambda u: u.is_staff)
     def edit(request, data, id):
         weapon=Weapon.objects.get(id=id)
-        weapon.command= data['command']
+        weapon.command=data['command']
         weapon.category=data['category']
-        weapon.name= data['name']
-        weapon.muzzle= data['muzzle']
-        weapon.barrel= data['barrel']
-        weapon.laser= data['laser']
-        weapon.optic= data['optic']
-        weapon.stock= data['stock']
-        weapon.underbarrel= data['underbarrel']
-        weapon.magazine= data['magazine']
-        weapon.ammunition= data['ammunition']
-        weapon.reargrip= data['reargrip']
-        weapon.perk= data['perk']
-        weapon.perk2= data['perk2']
-        weapon.alternative= data['alternative']
-        weapon.alternative2= data['alternative2']
+        weapon.name=data['name']
+        weapon.muzzle=data['muzzle']
+        weapon.barrel=data['barrel']
+        weapon.laser=data['laser']
+        weapon.optic=data['optic']
+        weapon.stock=data['stock']
+        weapon.underbarrel=data['underbarrel']
+        weapon.magazine=data['magazine']
+        weapon.ammunition=data['ammunition']
+        weapon.reargrip=data['reargrip']
+        weapon.perk=data['perk']
+        weapon.perk2=data['perk2']
+        weapon.alternative=data['alternative']
+        weapon.alternative2=data['alternative2']
         weapon.save()
 
     @login_required
@@ -223,6 +214,7 @@ class WeaponView(ListView):
         page_obj = paginator.get_page(page_number)
         return render(request, 'crud_weapons/weapons_list.html', {'page_obj': page_obj})
 
+
 class WeaponApi(View):
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
@@ -238,15 +230,15 @@ class WeaponApi(View):
             weapons=list(Weapon.objects.values())
 
         if len(weapons) > 0:
-            return JsonResponse({'message':"Success",'weapons':weapons})
+            return JsonResponse({'message': "Success",'weapons':weapons})
         else:
-            return JsonResponse({'message':"Error: weapon not found..."})
+            return Response({'message': "Error: weapon not found..."}, status=status.HTTP_404_NOT_FOUND)
 
     @api_login_required
     def post(self, request, *args, **kwargs):
         data = json.loads(request.body)
         if len(list(Weapon.objects.filter(command=data['command']).values())) > 0:
-            return JsonResponse({'message':"Error: this weapon already exist"})
+            return Response({'message': "Error: this weapon already exist"}, status=status.HTTP_400_BAD_REQUEST)
         else:
             weapon = Weapon.objects.create(
                 command=data['command'],
@@ -268,7 +260,7 @@ class WeaponApi(View):
             )
             serializer = WeaponSerializer(data=vars(weapon))
             serializer.is_valid(raise_exception=True)
-            return JsonResponse({'message':"Success", 'weapons':serializer.data})
+            return Response({'message': "Success", 'weapons': serializer.data}, status=status.HTTP_202_ACCEPTED)
     
     @api_login_required
     def put(self, request, *args, **kwargs):
@@ -276,34 +268,34 @@ class WeaponApi(View):
         weapons=list(Weapon.objects.filter(command=data['command']).values())
         if len(weapons) > 0:
             weapon=Weapon.objects.get(command=data['command'])
-            weapon.command= data['command']
+            weapon.command=data['command']
             weapon.category=data['category']
-            weapon.name= data['name']
-            weapon.muzzle= data['muzzle']
-            weapon.barrel= data['barrel']
-            weapon.laser= data['laser']
-            weapon.optic= data['optic']
+            weapon.name=data['name']
+            weapon.muzzle=data['muzzle']
+            weapon.barrel=data['barrel']
+            weapon.laser=data['laser']
+            weapon.optic=data['optic']
             weapon.stock= data['stock']
-            weapon.underbarrel= data['underbarrel']
-            weapon.magazine= data['magazine']
-            weapon.ammunition= data['ammunition']
-            weapon.reargrip= data['reargrip']
-            weapon.perk= data['perk']
-            weapon.perk2= data['perk2']
-            weapon.alternative= data['alternative']
-            weapon.alternative2= data['alternative2']
+            weapon.underbarrel=data['underbarrel']
+            weapon.magazine=data['magazine']
+            weapon.ammunition=data['ammunition']
+            weapon.reargrip=data['reargrip']
+            weapon.perk = data['perk']
+            weapon.perk2 = data['perk2']
+            weapon.alternative = data['alternative']
+            weapon.alternative2 = data['alternative2']
             weapon.save()
             serializer = WeaponSerializer(data=vars(weapon))
             serializer.is_valid(raise_exception=True)
-            return JsonResponse({'message':"Success", 'weapons':serializer.data})
+            return JsonResponse({'message': "Success", 'weapons': serializer.data})
         else:
-            return JsonResponse({'message':"Error: weapon not found..."})
-    
+            return Response({'message': "Error: weapon not found..."}, status=status.HTTP_404_NOT_FOUND)
+
     @api_login_required
     def delete(self, request, id, *args, **kwargs):
-        weapons=list(Weapon.objects.filter(id=id).values())
+        weapons = list(Weapon.objects.filter(id=id).values())
         if len(weapons) > 0:
             Weapon.objects.filter(id=id).delete()
-            return JsonResponse({'message':"Success",'weapons':weapons})
+            return JsonResponse({'message': "Success", 'weapons': weapons})
         else:
-            return JsonResponse({'message':"Error: weapon not found..."})
+            return Response({'message': "Error: weapon not found..."}, status=status.HTTP_404_NOT_FOUND)
