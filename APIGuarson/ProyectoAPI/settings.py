@@ -27,9 +27,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-c11le^uvw_$aa1mee2hxfl32j527v*5ow%f+rj*-@u(e3ei%h7'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-#if os.getenv('ENVIRONMENT_MODE') == "prod":
+# if os.getenv('ENVIRONMENT_MODE') == "prod":
 #    DEBUG = False
-#else:
+# else:
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
@@ -86,31 +86,31 @@ WSGI_APPLICATION = 'ProyectoAPI.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-#PRODUCCION
+# PRODUCCION
 if os.getenv('ENVIRONMENT_MODE') == "prod":
     DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'HOST': os.getenv('DATABASE_HOST'),
-        'PORT': '5432',
-        'USER': os.getenv('DATABASE_USER'),
-        'PASSWORD': os.getenv('DATABASE_PSW'),
-        'NAME': os.getenv('DATABASE_NAME')
-        }
-    }
+                'default': {
+                    'ENGINE': 'django.db.backends.postgresql_psycopg2',
+                    'HOST': os.getenv('DATABASE_HOST'),
+                    'PORT': '5432',
+                    'USER': os.getenv('DATABASE_USER'),
+                    'PASSWORD': os.getenv('DATABASE_PSW'),
+                    'NAME': os.getenv('DATABASE_NAME')
+                    }
+                }
 
-##DESARROLLO
+# DESARROLLO
 else:
     DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'HOST': 'localhost',
-        'PORT': '5432',
-        'USER': 'postgres',
-        'PASSWORD': '1234',
-        'NAME': 'apiguarson'
-        }
-    }
+                'default': {
+                    'ENGINE': 'django.db.backends.postgresql_psycopg2',
+                    'HOST': 'localhost',
+                    'PORT': '5432',
+                    'USER': 'postgres',
+                    'PASSWORD': '1234',
+                    'NAME': 'apiguarson'
+                    }
+                }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
@@ -149,7 +149,7 @@ SIMPLE_JWT = {
     'AUDIENCE': None,
     'ISSUER': None,
     'JWK_URL': None,
-    'LEEWAY': 0, 
+    'LEEWAY': 0,
 
     'AUTH_HEADER_TYPES': ('Bearer',),
     'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
