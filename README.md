@@ -15,3 +15,7 @@ START PROJECT AT LOCALHOST:
 
 COMMAND update all Packages:
 pip freeze | %{$_.split('==')[0]} | %{pip install --upgrade $_}
+
+
+# Note
+If the app on debug = False is giving 'Error 500', run the command collectstatic.
