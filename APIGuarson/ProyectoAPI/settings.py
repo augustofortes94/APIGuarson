@@ -99,7 +99,20 @@ if os.getenv('ENVIRONMENT_MODE') == "prod":
                     }
                 }
 
-# DESARROLLO
+# DOCKER
+elif os.getenv('ENVIRONMENT_MODE') == "docker":
+    DATABASES = {
+                'default': {
+                    'ENGINE': 'django.db.backends.postgresql_psycopg2',
+                    'HOST': 'host.docker.internal',
+                    'PORT': '5432',
+                    'USER': 'postgres',
+                    'PASSWORD': '1234',
+                    'NAME': 'apiguarson'
+                    }
+                }
+
+# DEVELOPMENT
 else:
     DATABASES = {
                 'default': {
