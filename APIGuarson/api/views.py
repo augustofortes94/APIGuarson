@@ -163,7 +163,7 @@ class WeaponApi(APIView):
         for weapons in request.data:
             try:
                 Weapon.objects.get(command=weapons['command'])
-                error[weapons['command']]='Error: not added'
+                error[weapons['command']] = 'Error: not added'
             except:
                 weapon = Weapon.objects.create(
                     command=weapons['command'],
