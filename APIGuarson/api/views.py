@@ -159,31 +159,33 @@ class WeaponApi(APIView):
 
     @api_login_required
     def post(self, request, *args, **kwargs):
-        data = json.loads(request.body)
-        if len(list(Weapon.objects.filter(command=data['command']).values())) > 0:
-            return Response({'message': "Error: this weapon already exist"}, status=status.HTTP_400_BAD_REQUEST)
-        else:
-            weapon = Weapon.objects.create(
-                command=data['command'],
-                category=data['category'],
-                name=data['name'],
-                muzzle=data['muzzle'],
-                barrel=data['barrel'],
-                laser=data['laser'],
-                optic=data['optic'],
-                stock=data['stock'],
-                underbarrel=data['underbarrel'],
-                magazine=data['magazine'],
-                ammunition=data['ammunition'],
-                reargrip=data['reargrip'],
-                perk=data['perk'],
-                perk2=data['perk2'],
-                alternative=data['alternative'],
-                alternative2=data['alternative2']
-            )
-            serializer = WeaponSerializer(data=vars(weapon))
-            serializer.is_valid(raise_exception=True)
-            return Response({'message': "Success", 'weapons': serializer.data}, status=status.HTTP_201_CREATED)
+        error = {}
+        for weapons in request.data:
+            try:
+                Weapon.objects.get(command=weapons['command'])
+                error[weapons['command']]='Error: not added'
+            except:
+                weapon = Weapon.objects.create(
+                    command=weapons['command'],
+                    category=weapons['category'],
+                    name=weapons['name'],
+                    muzzle=weapons['muzzle'],
+                    barrel=weapons['barrel'],
+                    laser=weapons['laser'],
+                    optic=weapons['optic'],
+                    stock=weapons['stock'],
+                    underbarrel=weapons['underbarrel'],
+                    magazine=weapons['magazine'],
+                    ammunition=weapons['ammunition'],
+                    reargrip=weapons['reargrip'],
+                    perk=weapons['perk'],
+                    perk2=weapons['perk2'],
+                    alternative=weapons['alternative'],
+                    alternative2=weapons['alternative2']
+                )
+                serializer = WeaponSerializer(data=vars(weapon))
+                serializer.is_valid(raise_exception=True)
+        return Response({'message': "Success", 'weapons not added': error}, status=status.HTTP_200_OK)
 
     @api_login_required
     def put(self, request, *args, **kwargs):
