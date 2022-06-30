@@ -1,15 +1,11 @@
-from django.urls import path, include
-from .views import ApiLogin, HomeView, RegisterUser, WeaponApi, WeaponView
+from .views import HomeView, WeaponApi, WeaponView
+from django.urls import path
+from user.views import ApiLogin
+
+app_name = 'api'
 
 urlpatterns = [
-    path('', HomeView.homeview),
-
-    # USERS
-    path('accounts/', include('django.contrib.auth.urls')),
-    path('register/', RegisterUser.register, name='register'),
-    path('user/edit/<int:id>', RegisterUser.userEdit, name='user_edit'),
-    path('user/list', RegisterUser.userList, name='user_list'),
-    path('user/delete/<int:id>', RegisterUser.userDelete, name='user_delete'),
+    path('', HomeView.homeview, name='home'),
 
     # API
     path('api/login/', ApiLogin.as_view(), name='api_login'),

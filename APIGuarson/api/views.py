@@ -1,96 +1,19 @@
-from .forms import UserRegisterForm
+import json
 from .serializers import WeaponSerializer
 from .models import Weapon
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.paginator import Paginator
-from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import CreateView, ListView
+from django.views.generic import ListView
 from pymysql import NULL
 from rest_framework import status
-from rest_framework.response import Response
 from rest_framework.views import APIView
-import json
-import jwt
-import datetime
-from .decorators import api_login_required
-from django.contrib.auth.decorators import user_passes_test
-
-
-class ApiLogin(APIView):
-    @method_decorator(csrf_exempt)
-    def dispatch(self, request, *args, **kwargs):
-        return super().dispatch(request, *args, **kwargs)
-
-    def post(self, request):
-        username = request.data['username']
-        password = request.data['password']
-
-        user = User.objects.filter(username=username).first()
-        if user is None:
-            return Response({'message': "Error: user not found..."}, status=status.HTTP_404_NOT_FOUND)
-
-        else:
-            if not user.check_password(password):
-                return JsonResponse({'message': "Error: incorrect password..."})
-
-            payload = {
-                    'id': user.id,
-                    'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=60),
-                    'iat': datetime.datetime.utcnow()
-                    }
-            token = jwt.encode(payload, 'secret', algorithm='HS256')
-
-            response = Response()
-            response.set_cookie(key='jwt', value=token, httponly=True)
-            response.data = {'message': "Succes"}
-            return response
-
-
-class RegisterUser(CreateView):
-    def register(request):
-        if request.method == 'POST':
-            form = UserRegisterForm(request.POST)
-            if form.is_valid():
-                form.save()
-                username = form.cleaned_data.get('username')
-                messages.success(request, f'Account created for {username}, please Login')
-                return redirect('/weapon/list')
-        else:
-            form = UserRegisterForm()
-        return render(request, 'registration/register.html', {'form': form})
-
-    @login_required
-    @user_passes_test(lambda u: u.is_superuser)
-    def userEdit(request, id):
-        user = User.objects.get(id=id)
-        if len(request.POST) == 2:
-            user.is_staff = False
-        else:
-            user.is_staff = True
-        user.save()
-        return redirect('/user/list')
-
-    @login_required
-    @user_passes_test(lambda u: u.is_superuser)
-    def userList(request):
-        users = list(User.objects.all().order_by('username'))
-        return render(request, 'registration/user_list.html', {"users": users})
-
-    @login_required
-    @user_passes_test(lambda u: u.is_superuser)
-    def userDelete(request, id):
-        user = User.objects.get(id=id)
-        if user.is_superuser:
-            messages.warning(request, 'No es posible eliminar al superusuario')
-        else:
-            User.objects.filter(id=id).delete()
-        return redirect('/user/list')
+from rest_framework.response import Response
+from user.decorators import api_login_required
 
 
 class HomeView(View):
@@ -215,7 +138,7 @@ class WeaponView(ListView):
         return render(request, 'crud_weapons/weapons_list.html', {'page_obj': page_obj})
 
 
-class WeaponApi(View):
+class WeaponApi(APIView):
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
@@ -230,7 +153,7 @@ class WeaponApi(View):
             weapons = list(Weapon.objects.values())
 
         if len(weapons) > 0:
-            return JsonResponse({'message': "Success", 'weapons': weapons})
+            return Response({'message': "Success", 'weapons': weapons}, status=status.HTTP_202_ACCEPTED)
         else:
             return Response({'message': "Error: weapon not found..."}, status=status.HTTP_404_NOT_FOUND)
 
@@ -260,7 +183,7 @@ class WeaponApi(View):
             )
             serializer = WeaponSerializer(data=vars(weapon))
             serializer.is_valid(raise_exception=True)
-            return Response({'message': "Success", 'weapons': serializer.data}, status=status.HTTP_202_ACCEPTED)
+            return Response({'message': "Success", 'weapons': serializer.data}, status=status.HTTP_201_CREATED)
 
     @api_login_required
     def put(self, request, *args, **kwargs):
@@ -287,7 +210,7 @@ class WeaponApi(View):
             weapon.save()
             serializer = WeaponSerializer(data=vars(weapon))
             serializer.is_valid(raise_exception=True)
-            return JsonResponse({'message': "Success", 'weapons': serializer.data})
+            return Response({'message': "Success", 'weapons': serializer.data}, status=status.HTTP_202_ACCEPTED)
         else:
             return Response({'message': "Error: weapon not found..."}, status=status.HTTP_404_NOT_FOUND)
 
@@ -296,6 +219,6 @@ class WeaponApi(View):
         weapons = list(Weapon.objects.filter(id=id).values())
         if len(weapons) > 0:
             Weapon.objects.filter(id=id).delete()
-            return JsonResponse({'message': "Success", 'weapons': weapons})
+            return Response({'message': "Success", 'weapons': weapons}, status=status.HTTP_202_ACCEPTED)
         else:
             return Response({'message': "Error: weapon not found..."}, status=status.HTTP_404_NOT_FOUND)

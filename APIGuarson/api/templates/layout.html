@@ -46,14 +46,14 @@
                                 <a class="nav-item nav-link">{{ request.user }}</a> <!-- Username -->
                             </li>
                             <li class="nav-item d-flex justify-content">
-                                <a class="nav-item nav-link" href="/accounts/logout" title="Logout"><i class="fa-solid fa-right-from-bracket"></i></a>  <!-- Logout -->
+                                <a class="nav-item nav-link" href="/user/accounts/logout" title="Logout"><i class="fa-solid fa-right-from-bracket"></i></a>  <!-- Logout -->
                             </li>
                         {% else %}
                             <li class="nav-item d-flex justify-content">
-                                <a class="nav-item nav-link" href="/accounts/login" title="Login">Login</a> <!-- Login -->
+                                <a class="nav-item nav-link" href="/user/accounts/login" title="Login">Login</a> <!-- Login -->
                             </li>
                             <li class="nav-item d-flex justify-content">
-                                <a class="nav-item nav-link" href="/register" title="Register">Register</a> <!-- Register -->
+                                <a class="nav-item nav-link" href="/user/register" title="Register">Register</a> <!-- Register -->
                             </li>
                         {% endif %}
                     </ul>
