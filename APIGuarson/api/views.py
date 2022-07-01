@@ -16,12 +16,6 @@ from rest_framework.response import Response
 from user.decorators import api_login_required
 
 
-class HomeView(View):
-    @login_required
-    def homeview(request):
-        return redirect('/weapon/list')
-
-
 class WeaponView(ListView):
     @login_required
     @user_passes_test(lambda u: u.is_staff)
@@ -132,7 +126,6 @@ class WeaponView(ListView):
             weapons = Weapon.objects.all().order_by('command')
 
         paginator = Paginator(weapons, 12)
-
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
         return render(request, 'crud_weapons/weapons_list.html', {'page_obj': page_obj})

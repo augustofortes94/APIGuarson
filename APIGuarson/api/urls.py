@@ -1,11 +1,11 @@
-from .views import HomeView, WeaponApi, WeaponView
+from .views import WeaponApi, WeaponView
 from django.urls import path
 from user.views import ApiLogin
 
 app_name = 'api'
 
 urlpatterns = [
-    path('', HomeView.homeview, name='home'),
+    path('', WeaponView.weaponList, name='weapons_list'),
 
     # API
     path('api/login/', ApiLogin.as_view(), name='api_login'),
