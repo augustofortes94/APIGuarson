@@ -30,11 +30,14 @@
                         <li class="nav-item">
                             <a class="nav-item nav-link" href="/weapon/list"><i class="fa-solid fa-house"></i></a>  <!-- Home -->
                         </li>
-                        <li class="nav-item w-25">
-                            {% if request.user.is_superuser %}
+                        {% if request.user.is_superuser %}
+                            <li class="nav-item">
                                 <a class="nav-item nav-link" href="/user/list"><i class="fa-solid fa-user-pen"></i></a> <!-- Edit users -->
-                            {% endif %}
-                        </li>
+                            </li>
+                            <li class="nav-item w-25">
+                                <a class="nav-item nav-link" href="/mode/list"><i class="fa-solid fa-map-location-dot"></i></a> <!-- Edit modes -->
+                            </li>
+                        {% endif %}
                         <li class="nav-item d-flex justify-content w-75">
                             <form class="d-flex justify-content-end w-50" action="/weapon/list" method="POST">{% csrf_token %}  <!-- Search bar -->
                                 <input class="form-control mr-sm-2" name="searched" type="text" placeholder="Search" aria-label="Search" style="display: inline;">

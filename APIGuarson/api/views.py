@@ -1,12 +1,11 @@
 import json
 from .serializers import WeaponSerializer
-from .models import Weapon
+from .models import Lobby, Weapon
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.paginator import Paginator
 from django.shortcuts import redirect, render
 from django.utils.decorators import method_decorator
-from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView
 from pymysql import NULL
@@ -14,6 +13,49 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from user.decorators import api_login_required
+
+
+class ModeLobbyView(ListView):
+    @login_required
+    @user_passes_test(lambda u: u.is_superuser)
+    def modesList(request):
+        modes = Lobby.objects.all().order_by('name')
+        paginator = Paginator(modes, 12)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        return render(request, 'crud_maps/modes_list.html', {'page_obj': page_obj})
+    
+    @login_required
+    @user_passes_test(lambda u: u.is_superuser)
+    def modeAddForm(request):
+        return render(request, 'crud_maps/modes_add.html')
+
+    @login_required
+    @user_passes_test(lambda u: u.is_superuser)
+    def modeAdd(request):
+        try:
+            Lobby.objects.get(mode=request.POST['mode'])
+            messages.warning(request, request.POST['mode'] + ' ya existe')
+        except:
+            try:
+                Lobby.objects.get(name=request.POST['name'])
+                messages.warning(request, request.POST['name'] + ' ya existe')
+            except:
+                Lobby.objects.create(
+                    mode=request.POST['mode'],
+                    name=request.POST['name'],
+                    map=request.POST['map']
+                )
+                messages.success(request, request.POST['name'] + ' ha sido creado')
+        return redirect('/mode/list')
+
+    @login_required
+    @user_passes_test(lambda u: u.is_superuser)
+    def modeDelete(request, id):
+        mode = Lobby.objects.get(id=id)
+        Lobby.objects.filter(id=id).delete()
+        messages.success(request,  mode.name + ' ha sido eliminada')
+        return redirect('/mode/list')
 
 
 class WeaponView(ListView):
@@ -73,9 +115,10 @@ class WeaponView(ListView):
             else:
                 data[key] = request.POST[key]
         data = json.loads(json.dumps(data))
-        if len(list(Weapon.objects.filter(command=data['command']).values())) > 0:
+        try:
+            Weapon.objects.get(command=data['command'])
             messages.warning(request, data['command'] + ' ya existe')
-        else:
+        except:
             WeaponView.add(request, data)
             messages.success(request, data['name'] + ' ha sido creada')
         return redirect('/weapon/list')

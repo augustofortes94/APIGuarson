@@ -1,0 +1,38 @@
+{% extends "../layout.html" %}
+
+{% block title %} Add Weapon {% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="d-flex justify-content-center">
+            <div class="card w-100">
+                <h3 class="text-center pt-1">Agregar Modo</h2>
+                <div class="card-body">
+                    <form id="add-weapon" action="/mode/add" method="POST" name="add-mode-form">{% csrf_token %}
+                        <div class="input-group pt-2">
+                            <span class="input-group-text" id="basic-addon3">Mode</span>
+                            <input type="text" class="form-control" id="add-mode" name="mode" required>
+                        </div>
+                        <div class="input-group pt-2">
+                            <span class="input-group-text" id="basic-addon3">Name</span>
+                            <input type="text" class="form-control" id="add-name" name="name" required>
+                        </div>
+                        <div class="input-group pt-2">
+                            <label class="input-group-text" for="inputGroupSelect01">Mapa</label>
+                            <select class="form-select" id="add-map" name="map">
+                                <option selected></option>
+                                <option value="Caldera">Caldera</option>
+                                <option value="Fortunes Keep">Fortunes Keep</option>
+                                <option value="Rebirth Island">Rebirth Island</option>
+                                <option value="Verdansk">Verdansk</option>
+                            </select>
+                        </div>
+                        <div class="form-group pt-2">
+                            <button type="submit" class="btn btn-warning btn-block text-white">Add</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
