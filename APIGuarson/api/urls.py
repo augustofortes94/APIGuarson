@@ -1,8 +1,13 @@
 from .views import ModeLobbyView, WeaponApi, WeaponView
 from django.urls import path
+from . import views
+from rest_framework import routers
 from user.views import ApiLogin
 
 app_name = 'api'
+
+router = routers.DefaultRouter()
+router.register('mode', views.ModeLobbyApi)
 
 urlpatterns = [
     path('', WeaponView.weaponList, name='weapons_list'),

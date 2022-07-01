@@ -1,5 +1,5 @@
 import json
-from .serializers import WeaponSerializer
+from .serializers import WeaponSerializer, LobbySerializer
 from .models import Lobby, Weapon
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -9,10 +9,19 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView
 from pymysql import NULL
-from rest_framework import status
+from rest_framework import status, viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from user.decorators import api_login_required
+
+
+class ModeLobbyApi(viewsets.ModelViewSet):
+    queryset = Lobby.objects.all()
+    serializer_class = LobbySerializer
+
+    def retrieve(self, request, *args, **kwargs):   # GET BY
+        modes = list(Lobby.objects.filter(mode=self.get_object()).values())
+        return Response({'modes': modes}, status=status.HTTP_200_OK)
 
 
 class ModeLobbyView(ListView):
