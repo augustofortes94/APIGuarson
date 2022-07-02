@@ -19,9 +19,9 @@ class ModeLobbyApi(viewsets.ModelViewSet):
     queryset = Lobby.objects.all()
     serializer_class = LobbySerializer
 
-    def retrieve(self, request, *args, **kwargs):   # GET BY
-        modes = list(Lobby.objects.filter(mode=self.get_object()).values())
-        return Response({'modes': modes}, status=status.HTTP_200_OK)
+    @api_login_required
+    def retrieve(self, request, *args, **kwargs):
+        return super().retrieve(request, *args, **kwargs)
 
 
 class ModeLobbyView(ListView):

@@ -1,5 +1,5 @@
 from .views import ModeLobbyView, WeaponApi, WeaponView
-from django.urls import path
+from django.urls import path, include
 from . import views
 from rest_framework import routers
 from user.views import ApiLogin
@@ -13,6 +13,7 @@ urlpatterns = [
     path('', WeaponView.weaponList, name='weapons_list'),
 
     # API
+    path('api/', include(router.urls), name='api_mode_lobby'),  # include api for lobby modes
     path('api/login/', ApiLogin.as_view(), name='api_login'),
     path('api/weapons/', WeaponApi.as_view(), name='api_list'),
     path('api/weapons/<int:id>', WeaponApi.as_view(), name='api_get_by_id'),
