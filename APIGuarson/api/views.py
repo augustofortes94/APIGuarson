@@ -21,8 +21,15 @@ class ModeLobbyApi(viewsets.ModelViewSet):
     lookup_field = 'mode'   # Search by mode and not for id
 
     @api_login_required
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
     def retrieve(self, request, *args, **kwargs):
-        return super().retrieve(request, *args, **kwargs)
+        try:
+            mode = Lobby.objects.filter(mode=self.get_object().mode).values()
+            return Response({'message': "Success", 'mode': mode}, status=status.HTTP_202_ACCEPTED)
+        except:
+            return Response({'message': "Error: mode not found"}, status=status.HTTP_404_NOT_FOUND)
 
     @api_login_required
     def create(self, request, *args, **kwargs):
