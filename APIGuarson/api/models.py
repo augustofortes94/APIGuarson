@@ -2,9 +2,9 @@ from django.db import models
 
 
 class Weapon(models.Model):
-    command = models.CharField(max_length=50)
+    command = models.CharField(max_length=50, unique=True)
     category = models.CharField(max_length=50)
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50, unique=True)
     muzzle = models.CharField(max_length=100, null=True, blank=True, default=None)
     barrel = models.CharField(max_length=100, null=True, blank=True, default=None)
     laser = models.CharField(max_length=100, null=True, blank=True, default=None)
@@ -21,6 +21,6 @@ class Weapon(models.Model):
 
 
 class Lobby(models.Model):
-    mode = models.CharField(max_length=50)
-    name = models.CharField(max_length=50)
-    map = models.CharField(max_length=50)
+    mode = models.CharField(max_length=50, unique=True)
+    name = models.CharField(max_length=50, unique=True)
+    map = models.CharField(max_length=50, null=True, blank=True, default=None)

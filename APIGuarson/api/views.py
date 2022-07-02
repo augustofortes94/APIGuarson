@@ -8,7 +8,7 @@ from django.shortcuts import redirect, render
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView
-from pymysql import NULL
+from pymysql import NULL, IntegrityError
 from rest_framework import status, viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -18,10 +18,33 @@ from user.decorators import api_login_required
 class ModeLobbyApi(viewsets.ModelViewSet):
     queryset = Lobby.objects.all()
     serializer_class = LobbySerializer
+    lookup_field = 'mode'   # Search by mode and not for id
 
     @api_login_required
     def retrieve(self, request, *args, **kwargs):
         return super().retrieve(request, *args, **kwargs)
+
+    @api_login_required
+    def create(self, request, *args, **kwargs):
+        error = {}
+        for modes in request.data:
+            try:
+                Lobby.objects.create(
+                    mode=modes['mode'],
+                    name=modes['name'],
+                    map=modes['map']
+                )
+            except:
+                error[modes['mode']] = 'Error: not added'
+        return Response({'message': "Success", 'modes not added': error}, status=status.HTTP_200_OK)
+
+    @api_login_required
+    def destroy(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+    
+    @api_login_required
+    def update(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
 class ModeLobbyView(ListView):
@@ -44,18 +67,15 @@ class ModeLobbyView(ListView):
     def modeAdd(request):
         try:
             Lobby.objects.get(mode=request.POST['mode'])
-            messages.warning(request, request.POST['mode'] + ' ya existe')
+            Lobby.objects.get(name=request.POST['name'])
+            messages.warning(request, 'El modo o nombre ya existen')
         except:
-            try:
-                Lobby.objects.get(name=request.POST['name'])
-                messages.warning(request, request.POST['name'] + ' ya existe')
-            except:
-                Lobby.objects.create(
-                    mode=request.POST['mode'],
-                    name=request.POST['name'],
-                    map=request.POST['map']
-                )
-                messages.success(request, request.POST['name'] + ' ha sido creado')
+            Lobby.objects.create(
+                mode=request.POST['mode'],
+                name=request.POST['name'],
+                map=request.POST['map']
+            )
+            messages.success(request, request.POST['name'] + ' ha sido creado')
         return redirect('/mode/list')
 
     @login_required
@@ -207,10 +227,7 @@ class WeaponApi(APIView):
         error = {}
         for weapons in request.data:
             try:
-                Weapon.objects.get(command=weapons['command'])
-                error[weapons['command']] = 'Error: not added'
-            except:
-                weapon = Weapon.objects.create(
+                Weapon.objects.create(
                     command=weapons['command'],
                     category=weapons['category'],
                     name=weapons['name'],
@@ -228,8 +245,8 @@ class WeaponApi(APIView):
                     alternative=weapons['alternative'],
                     alternative2=weapons['alternative2']
                 )
-                serializer = WeaponSerializer(data=vars(weapon))
-                serializer.is_valid(raise_exception=True)
+            except:
+                error[weapons['command']] = 'Error: not added'
         return Response({'message': "Success", 'weapons not added': error}, status=status.HTTP_200_OK)
 
     @api_login_required

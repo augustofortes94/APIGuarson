@@ -1,4 +1,3 @@
-from pyexpat import model
 from .models import Weapon, Lobby
 from rest_framework import serializers
 
@@ -10,6 +9,8 @@ class WeaponSerializer(serializers.ModelSerializer):
 
 
 class LobbySerializer(serializers.ModelSerializer):
+    map = serializers.CharField(required=False)
+
     class Meta:
         model = Lobby
         fields = ['id', 'mode', 'name', 'map']
