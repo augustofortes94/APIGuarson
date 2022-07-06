@@ -24,6 +24,7 @@ class ModeLobbyApi(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
 
+    @api_login_required
     def retrieve(self, request, *args, **kwargs):
         try:
             mode = Lobby.objects.filter(mode=self.get_object().mode).values()
