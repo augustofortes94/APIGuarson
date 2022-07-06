@@ -4,7 +4,6 @@ from .forms import UserRegisterForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.models import User
-from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
@@ -29,7 +28,7 @@ class ApiLogin(APIView):
 
         else:
             if not user.check_password(password):
-                return JsonResponse({'message': "Error: incorrect password..."})
+                return Response({'message': "incorrect password..."}, status=status.HTTP_401_UNAUTHORIZED)
 
             payload = {
                     'id': user.id,
