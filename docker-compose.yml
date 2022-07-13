@@ -10,11 +10,11 @@ services:
     image: app:django
     environment:
       - SECRET_KEY=${SECRET_KEY}
-      - POSTGRES_HOST=${DATABASE_HOST}
-      - POSTGRES_PORT=${DATABASE_PORT}
-      - POSTGRES_USER=${DATABASE_USER}
-      - POSTGRES_PASSWORD=${DATABASE_PSW}
-      - POSTGRES_DB=${DATABASE_NAME}
+      - DATABASE_HOST=${DATABASE_HOST}
+      - DATABASE_PORT=${DATABASE_PORT}
+      - DATABASE_USER=${DATABASE_USER}
+      - DATABASE_PSW=${DATABASE_PSW}
+      - DATABASE_NAME=${DATABASE_NAME}
       - DEBUG_MODE=${DEBUG_MODE}
       - ALLOWED_HOSTS=${ALLOWED_HOSTS}
     container_name: apiguarson-app
@@ -29,11 +29,11 @@ services:
       - .:/app
     environment:
       - SECRET_KEY=${SECRET_KEY}
-      - POSTGRES_HOST=${DATABASE_HOST}
-      - POSTGRES_PORT=${DATABASE_PORT}
-      - POSTGRES_USER=${DATABASE_USER}
-      - POSTGRES_PASSWORD=${DATABASE_PSW}
-      - POSTGRES_DB=${DATABASE_NAME}
+      - DATABASE_HOST=${DATABASE_HOST}
+      - DATABASE_PORT=${DATABASE_PORT}
+      - DATABASE_USER=${DATABASE_USER}
+      - DATABASE_PSW=${DATABASE_PSW}
+      - DATABASE_NAME=${DATABASE_NAME}
       - DEBUG_MODE=${DEBUG_MODE}
       - ALLOWED_HOSTS=${ALLOWED_HOSTS}
     command: python APIGuarson/manage.py migrate
@@ -44,7 +44,7 @@ services:
 
   db:
     image: postgres:14.4-alpine
-    container_name: postgres-db
+    container_name: ${DATABASE_HOST}
     restart: always
     environment:
       - POSTGRES_USER=${DATABASE_USER}
