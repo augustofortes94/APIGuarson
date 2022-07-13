@@ -51,7 +51,7 @@ services:
       - POSTGRES_PASSWORD=${DATABASE_PSW}
       - POSTGRES_DB=${DATABASE_NAME}
     ports:
-      - '5433:5432'
+      - '5432:5432'
     volumes:
       - pgdata:/var/lib/postgresql/data
       - pgconf:/etc/postgresql
