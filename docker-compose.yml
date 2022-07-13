@@ -1,33 +1,73 @@
 version: "3.8"
-   
+
 services:
-  postgres:
-    image: postgres:14
-    restart: always
-    ports:
-      - 5432:5432
-    environment:
-      - DATABASE_HOST=127.0.0.1
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=1234
-      - POSTGRES_DB=api-guarson
-
-  pgadmin:
-    image: dpage/pgadmin4
-    environment: 
-      PGADMIN_DEFAULT_EMAIL: "admin@admin.com"
-      PGADMIN_DEFAULT_PASSWORD: "admin"
-    ports:
-      - "80:80"
-    depends_on: 
-      - postgres
-
-  api-guarson:
+  web:
     build: .
     volumes:
       - .:/app
     ports:
       - 8000:8000
     image: app:django
-    container_name: api-guarson-container
-    command: python manage.py runserver 0.0.0.0:8000
+    environment:
+      - SECRET_KEY=${SECRET_KEY}
+      - POSTGRES_HOST=${DATABASE_HOST}
+      - POSTGRES_PORT=${DATABASE_PORT}
+      - POSTGRES_USER=${DATABASE_USER}
+      - POSTGRES_PASSWORD=${DATABASE_PSW}
+      - POSTGRES_DB=${DATABASE_NAME}
+      - DEBUG_MODE=${DEBUG_MODE}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS}
+    container_name: apiguarson-app
+    command: python APIGuarson/manage.py runserver 0.0.0.0:8000
+    networks:
+      - localnetwork
+
+  migration:
+    build: .
+    image: app:django
+    volumes:
+      - .:/app
+    environment:
+      - SECRET_KEY=${SECRET_KEY}
+      - POSTGRES_HOST=${DATABASE_HOST}
+      - POSTGRES_PORT=${DATABASE_PORT}
+      - POSTGRES_USER=${DATABASE_USER}
+      - POSTGRES_PASSWORD=${DATABASE_PSW}
+      - POSTGRES_DB=${DATABASE_NAME}
+      - DEBUG_MODE=${DEBUG_MODE}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS}
+    command: python APIGuarson/manage.py migrate
+    networks:
+      - localnetwork
+    depends_on:
+      - db
+
+  db:
+    image: postgres:14.4-alpine
+    container_name: postgres-db
+    restart: always
+    environment:
+      - POSTGRES_USER=${DATABASE_USER}
+      - POSTGRES_PASSWORD=${DATABASE_PSW}
+      - POSTGRES_DB=${DATABASE_NAME}
+    ports:
+      - '5433:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - pgconf:/etc/postgresql
+      - pglog:/var/log/postgresql
+    networks:
+      - localnetwork
+
+volumes:
+  pgdata:
+    driver: local
+  pgconf:
+    driver: local
+  pglog: 
+    driver: local
+
+networks:
+  localnetwork:
+    name: APIGuarson-network
+    driver: bridge

@@ -8,7 +8,6 @@ from django.shortcuts import redirect, render
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView
-from pymysql import NULL, IntegrityError
 from rest_framework import status, viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -217,10 +216,10 @@ class WeaponApi(APIView):
         return super().dispatch(request, *args, **kwargs)
 
     @api_login_required
-    def get(self, request, id=0, command=NULL, *args, **kwargs):
+    def get(self, request, id=0, command=None, *args, **kwargs):
         if id > 0:      # GET BY ID
             weapons = list(Weapon.objects.filter(id=id).values())
-        elif command is not NULL:
+        elif command is not None:
             weapons = list(Weapon.objects.filter(command=command).values())
         else:           # GET ALL
             weapons = list(Weapon.objects.values())

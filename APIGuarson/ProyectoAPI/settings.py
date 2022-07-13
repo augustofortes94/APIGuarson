@@ -1,4 +1,4 @@
-import django_heroku
+#import django_heroku
 import os
 from dotenv import load_dotenv
 from pathlib import Path
@@ -17,12 +17,8 @@ load_dotenv()
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-if os.getenv('ENVIRONMENT_MODE') == "prod":
-    DEBUG = False
-    ALLOWED_HOSTS = ['https://apiguarson.herokuapp.com/']
-else:
-    DEBUG = True
-    ALLOWED_HOSTS = ['*']
+DEBUG = os.getenv('DEBUG_MODE')
+ALLOWED_HOSTS = [os.getenv('ALLOWED_HOSTS')]
 
 LOGIN_REDIRECT_URL = '/weapon/list'
 LOGOUT_REDIRECT_URL = '/weapon/list'
@@ -78,44 +74,16 @@ WSGI_APPLICATION = 'ProyectoAPI.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-# PRODUCCION
-if os.getenv('ENVIRONMENT_MODE') == "prod":
-    DATABASES = {
-                'default': {
-                    'ENGINE': 'django.db.backends.postgresql_psycopg2',
-                    'HOST': os.getenv('DATABASE_HOST'),
-                    'PORT': '5432',
-                    'USER': os.getenv('DATABASE_USER'),
-                    'PASSWORD': os.getenv('DATABASE_PSW'),
-                    'NAME': os.getenv('DATABASE_NAME')
-                    }
+DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.postgresql_psycopg2',
+                'HOST': os.getenv('DATABASE_HOST'),
+                'PORT': os.getenv('DATABASE_PORT'),
+                'USER': os.getenv('DATABASE_USER'),
+                'PASSWORD': os.getenv('DATABASE_PSW'),
+                'NAME': os.getenv('DATABASE_NAME')
                 }
-
-# DOCKER
-elif os.getenv('ENVIRONMENT_MODE') == "docker":
-    DATABASES = {
-                'default': {
-                    'ENGINE': 'django.db.backends.postgresql_psycopg2',
-                    'HOST': 'host.docker.internal',
-                    'PORT': '5432',
-                    'USER': 'postgres',
-                    'PASSWORD': '1234',
-                    'NAME': 'apiguarson'
-                    }
-                }
-
-# DEVELOPMENT
-else:
-    DATABASES = {
-                'default': {
-                    'ENGINE': 'django.db.backends.postgresql_psycopg2',
-                    'HOST': 'localhost',
-                    'PORT': '5432',
-                    'USER': 'postgres',
-                    'PASSWORD': '1234',
-                    'NAME': 'apiguarson'
-                    }
-                }
+            }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
@@ -191,7 +159,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
+STATICFILES_DIRS = (os.path.join(BASE_DIR, 'staticfiles'),)
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
@@ -200,6 +168,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-django_heroku.settings(locals())
+#django_heroku.settings(locals())
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
