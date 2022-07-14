@@ -21,25 +21,26 @@
                     <td class="text-center">{{ modes.mode }}</td>
                     <td class="text-center">{{ modes.map }}</td>
                     <td class="text-center">
-                        <a class="btn" href="#"><i class="fa-regular fa-pen-to-square"></i></a>
-                        <a class="btn ms-3" href="/mode/delete/{{ modes.id }}"><i class="fa-regular fa-trash-can"></i></a>
+                        <a class="btn ms-3" href="/mode/delete/{{ modes.id }}"><i class="fa-regular fa-trash-can"></i></a>  <!-- Delete -->
                     </td>
                 </tr>
                 {% endfor %}
+                <!--
                 <tr>
                     <th>
-                        <div><input type="string" placeholder="Nombre"></div>
+                        <div><input id="name" type="string" placeholder="Nombre"></div>
                     </th>
                     <th>
-                        <div><input type="string" placeholder="Modo"></div>
+                        <div><input id="mode" type="string" placeholder="Modo"></div>
                     </th>
                     <th>
-                        <div><input type="string" placeholder="Mapa"></div>
+                        <div><input id="map" type="string" placeholder="Mapa"></div>
                     </th>
                     <th>
-                        <div><button type="submit" class="btn btn-warning btn-block text-white">Add</button></div>
+                        <div><button id="addmode-button" class="btn btn-warning btn-block text-white">Add</button></div>
                     </th>
                 </tr>
+                -->
             </table>
         </div>
         <div class="pagination d-flex justify-content-center mb-4">

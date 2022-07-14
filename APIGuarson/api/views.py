@@ -62,16 +62,18 @@ class ModeLobbyView(ListView):
         paginator = Paginator(modes, 12)
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
-        return render(request, 'crud_maps/modes_list.html', {'page_obj': page_obj})
+        return render(request, 'crud_modes/modes_list.html', {'page_obj': page_obj})
     
     @login_required
     @user_passes_test(lambda u: u.is_superuser)
     def modeAddForm(request):
-        return render(request, 'crud_maps/modes_add.html')
+        return render(request, 'crud_modes/modes_add.html')
 
     @login_required
     @user_passes_test(lambda u: u.is_superuser)
     def modeAdd(request):
+        print(request.POST)
+        print(type(request))
         try:
             Lobby.objects.get(mode=request.POST['mode'])
             Lobby.objects.get(name=request.POST['name'])
