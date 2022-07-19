@@ -222,7 +222,7 @@ class WeaponApi(APIView):
         if id > 0:      # GET BY ID
             weapons = list(Weapon.objects.filter(id=id).values())
         elif command is not None:
-            weapons = list(Weapon.objects.filter(command__iexact=command).values())
+            weapons = list(Weapon.objects.filter(command__icontains=command).values())
         else:           # GET ALL
             weapons = list(Weapon.objects.values())
 
