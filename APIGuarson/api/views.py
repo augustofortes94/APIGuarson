@@ -226,6 +226,7 @@ class WeaponApi(APIView):
             weapons = list(Weapon.objects.filter(command__icontains=request.GET.get('command')).values())
         elif request.GET.get('category'):
             weapons = list(Weapon.objects.filter(category__icontains=request.GET.get('category')).values_list('command').order_by('command'))
+            return Response({'message': "Success", 'weapons': weapons}, status=status.HTTP_202_ACCEPTED)
         else:           # GET ALL
             weapons = list(Weapon.objects.values())
             
