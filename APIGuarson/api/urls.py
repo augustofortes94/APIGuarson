@@ -16,8 +16,7 @@ urlpatterns = [
     path('api/', include(router.urls), name='api_mode_lobby'),  # include api for lobby modes
     path('api/login/', ApiLogin.as_view(), name='api_login'),
     path('api/weapons/', WeaponApi.as_view(), name='api_list'),
-    path('api/weapons/<int:id>', WeaponApi.as_view(), name='api_get_by_id'),
-    path('api/weapons/<str:command>', WeaponApi.as_view(), name='api_get_by_command'),
+    path('api/weapons/<int:id>', WeaponApi.as_view(), name='api_delete_by_id'),
 
     # MODE MAPS
     path('mode/list/', ModeLobbyView.modesList, name='map_modes_list'),

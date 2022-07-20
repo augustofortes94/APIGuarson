@@ -1,3 +1,4 @@
+from dataclasses import field
 import json
 from .serializers import WeaponSerializer, LobbySerializer
 from .models import Lobby, Weapon
@@ -218,16 +219,19 @@ class WeaponApi(APIView):
         return super().dispatch(request, *args, **kwargs)
 
     @api_login_required
-    def get(self, request, id=0, command=None, *args, **kwargs):
-        if id > 0:      # GET BY ID
-            weapons = list(Weapon.objects.filter(id=id).values())
-        elif command is not None:
-            weapons = list(Weapon.objects.filter(command__icontains=command).values())
+    def get(self, request, *args, **kwargs):
+        if request.GET.get('id'):
+            weapons = list(Weapon.objects.filter(id=request.GET.get('id')).values())
+        elif request.GET.get('command'):
+            weapons = list(Weapon.objects.filter(command__icontains=request.GET.get('command')).values())
+        elif request.GET.get('category'):
+            weapons = list(Weapon.objects.filter(category__icontains=request.GET.get('category')).values_list('command').order_by('command'))
         else:           # GET ALL
             weapons = list(Weapon.objects.values())
-
-        if len(weapons) > 0:
-            return Response({'message': "Success", 'weapons': weapons}, status=status.HTTP_202_ACCEPTED)
+            
+        serializer = WeaponSerializer(weapons, many=True)
+        if weapons:
+            return Response({'message': "Success", 'weapons': serializer.data}, status=status.HTTP_202_ACCEPTED)
         else:
             return Response({'message': "Error: weapon not found..."}, status=status.HTTP_404_NOT_FOUND)
 
@@ -289,9 +293,12 @@ class WeaponApi(APIView):
 
     @api_login_required
     def delete(self, request, id, *args, **kwargs):
-        weapons = list(Weapon.objects.filter(id=id).values())
-        if len(weapons) > 0:
-            Weapon.objects.filter(id=id).delete()
-            return Response({'message': "Success", 'weapons': weapons}, status=status.HTTP_202_ACCEPTED)
-        else:
+        print(request.DELETE)
+        try:
+            weapon = Weapon.objects.get(id=id)
+        except:
             return Response({'message': "Error: weapon not found..."}, status=status.HTTP_404_NOT_FOUND)
+        
+        Weapon.objects.filter(id=id).delete()
+        serializer = WeaponSerializer(weapon)
+        return Response({'message': "Success", 'weapons': serializer.data}, status=status.HTTP_202_ACCEPTED)
