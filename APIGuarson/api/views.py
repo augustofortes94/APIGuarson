@@ -1,6 +1,5 @@
-from dataclasses import field
 import json
-from .serializers import WeaponSerializer, LobbySerializer
+from .serializers import LobbySerializer, WeaponCategorySerializer, WeaponSerializer
 from .models import Lobby, Weapon
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -294,7 +293,6 @@ class WeaponApi(APIView):
 
     @api_login_required
     def delete(self, request, id, *args, **kwargs):
-        print(request.DELETE)
         try:
             weapon = Weapon.objects.get(id=id)
         except:
@@ -303,3 +301,23 @@ class WeaponApi(APIView):
         Weapon.objects.filter(id=id).delete()
         serializer = WeaponSerializer(weapon)
         return Response({'message': "Success", 'weapons': serializer.data}, status=status.HTTP_202_ACCEPTED)
+
+
+class WeaponCategoryApi(APIView):
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+    @api_login_required
+    def get(self, request, *args, **kwargs):
+        commands = Weapon.objects.filter(category='Fusiles de Asalto').values_list('command').order_by('command')
+        serializer = WeaponCategorySerializer(commands, many=True)
+        data = {'Fusiles de Asalto': serializer.data}
+        """
+        data = {'Subfusiles': Weapon.objects.filter(category='Subfusiles').values_list('command').order_by('command')}
+        data = {'Escopetas': Weapon.objects.filter(category='Escopetas').values_list('command').order_by('command')}
+        data = {'Ametralladoras Ligeras': Weapon.objects.filter(category='Ametralladoras Ligeras').values_list('command').order_by('command')}
+        data = {'Fusiles de Precision': Weapon.objects.filter(category='Fusiles de Precision').values_list('command').order_by('command')}
+        data = {'Pistolas': Weapon.objects.filter(category='Pistolas').values_list('command').order_by('command')}
+        """
+        return Response({'message': "Success", 'categories': data}, status=status.HTTP_202_ACCEPTED)
