@@ -8,6 +8,7 @@ Recreational only.
     START PROJECT WITH DOCKER:
         1. Create a file named ".env" at main folder with the same format described below
         2. Run command 'docker-compose up --build'
+        3. (Optional) Run 'docker-compose logs -f' to see logs
 
 
     START PROJECT AT LOCALHOST:

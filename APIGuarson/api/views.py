@@ -223,9 +223,6 @@ class WeaponApi(APIView):
             weapons = list(Weapon.objects.filter(id=request.GET.get('id')).values())
         elif request.GET.get('command'):
             weapons = list(Weapon.objects.filter(command__icontains=request.GET.get('command')).values())
-        elif request.GET.get('category'):
-            weapons = list(Weapon.objects.filter(category__icontains=request.GET.get('category')).values_list('command').order_by('command'))
-            return Response({'message': "Success", 'weapons': weapons}, status=status.HTTP_202_ACCEPTED)
         else:           # GET ALL
             weapons = list(Weapon.objects.values())
             
@@ -309,15 +306,12 @@ class WeaponCategoryApi(APIView):
         return super().dispatch(request, *args, **kwargs)
 
     @api_login_required
-    def get(self, request, *args, **kwargs):
-        commands = Weapon.objects.filter(category='Fusiles de Asalto').values_list('command').order_by('command')
-        serializer = WeaponCategorySerializer(commands, many=True)
-        data = {'Fusiles de Asalto': serializer.data}
-        """
-        data = {'Subfusiles': Weapon.objects.filter(category='Subfusiles').values_list('command').order_by('command')}
-        data = {'Escopetas': Weapon.objects.filter(category='Escopetas').values_list('command').order_by('command')}
-        data = {'Ametralladoras Ligeras': Weapon.objects.filter(category='Ametralladoras Ligeras').values_list('command').order_by('command')}
-        data = {'Fusiles de Precision': Weapon.objects.filter(category='Fusiles de Precision').values_list('command').order_by('command')}
-        data = {'Pistolas': Weapon.objects.filter(category='Pistolas').values_list('command').order_by('command')}
-        """
+    def get(self, request, *args, **kwargs):        
+        data = {}
+        categories = Weapon.objects.order_by('category').values('category').distinct()  # get the different categories
+        
+        for category in categories:
+            commands = Weapon.objects.filter(category=category['category']).order_by('command')
+            serializer = WeaponCategorySerializer(commands, many=True)
+            data[category['category']] = serializer.data
         return Response({'message': "Success", 'categories': data}, status=status.HTTP_202_ACCEPTED)
