@@ -1,6 +1,7 @@
 import json
+from unicodedata import category
 from .serializers import LobbySerializer, WeaponCategorySerializer, WeaponSerializer
-from .models import Lobby, Weapon
+from .models import Lobby, Weapon, Command
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.paginator import Paginator
@@ -100,8 +101,12 @@ class WeaponView(ListView):
     @login_required
     @user_passes_test(lambda u: u.is_staff)
     def add(request, data):
+        command = Command.objects.create(
+                    command=data['command'],
+                    category=data['category']
+                    )
         Weapon.objects.create(
-            command=data['command'],
+            command=command,
             category=data['category'],
             name=data['name'],
             muzzle=data['muzzle'],
@@ -225,7 +230,9 @@ class WeaponApi(APIView):
             weapons = list(Weapon.objects.filter(command__icontains=request.GET.get('command')).values())
         else:           # GET ALL
             weapons = list(Weapon.objects.values())
-            
+
+        print('holaaaaaa')
+        print(weapons)
         serializer = WeaponSerializer(weapons, many=True)
         if weapons:
             return Response({'message': "Success", 'weapons': serializer.data}, status=status.HTTP_202_ACCEPTED)

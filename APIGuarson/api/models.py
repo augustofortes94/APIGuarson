@@ -1,8 +1,17 @@
+from unicodedata import category
 from django.db import models
 
 
-class Weapon(models.Model):
+class Command(models.Model):
     command = models.CharField(max_length=50, unique=True)
+    category = models.CharField(max_length=50)
+    text = models.CharField(max_length=50, null=True, blank=True, default=None)
+    parameter1 = models.CharField(max_length=50, null=True, blank=True, default=None)
+    parameter2 = models.CharField(max_length=50, null=True, blank=True, default=None)
+
+
+class Weapon(models.Model):
+    command = models.ForeignKey(Command, on_delete=models.CASCADE)
     category = models.CharField(max_length=50)
     name = models.CharField(max_length=50, unique=True)
     muzzle = models.CharField(max_length=100, null=True, blank=True, default=None)
