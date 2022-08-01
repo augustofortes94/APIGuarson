@@ -1,5 +1,4 @@
 import json
-from unicodedata import category
 from .serializers import LobbySerializer, WeaponCategorySerializer, WeaponSerializer
 from .models import Lobby, Weapon, Command
 from django.contrib import messages
@@ -225,14 +224,13 @@ class WeaponApi(APIView):
     @api_login_required
     def get(self, request, *args, **kwargs):
         if request.GET.get('id'):
-            weapons = list(Weapon.objects.filter(id=request.GET.get('id')).values())
+            weapons = Weapon.objects.filter(id=request.GET.get('id'))
         elif request.GET.get('command'):
-            weapons = list(Weapon.objects.filter(command__icontains=request.GET.get('command')).values())
+            weapons = Weapon.objects.filter(command__icontains=request.GET.get('command'))
         else:           # GET ALL
-            weapons = list(Weapon.objects.values())
+            weapons = Weapon.objects.all()
 
         print('holaaaaaa')
-        print(weapons)
         serializer = WeaponSerializer(weapons, many=True)
         if weapons:
             return Response({'message': "Success", 'weapons': serializer.data}, status=status.HTTP_202_ACCEPTED)
@@ -244,8 +242,12 @@ class WeaponApi(APIView):
         error = {}
         for weapons in request.data:
             try:
+                command = Command.objects.create(
+                    name=weapons['command'],
+                    category=weapons['category']
+                )
                 Weapon.objects.create(
-                    command=weapons['command'],
+                    command=command,
                     category=weapons['category'],
                     name=weapons['name'],
                     muzzle=weapons['muzzle'],

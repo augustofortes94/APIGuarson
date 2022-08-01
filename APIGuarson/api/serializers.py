@@ -1,4 +1,3 @@
-from dataclasses import fields
 from .models import Weapon, Lobby, Command
 from rest_framework import serializers
 
@@ -6,15 +5,15 @@ from rest_framework import serializers
 class CommandSimpleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Command
-        fields = ('command', 'text')
+        fields = ('command')
 
 
 class WeaponSerializer(serializers.ModelSerializer):
-    command_id = CommandSimpleSerializer(many=True, read_only=True)
-    
+    command = serializers.CharField(source='command.name', read_only=True)
+
     class Meta:
         model = Weapon
-        fields = ['id', 'name', 'command_id', 'category', 'muzzle', 'barrel', 'laser', 'optic', 'stock', 'underbarrel', 'magazine', 'ammunition', 'reargrip', 'perk', 'perk2', 'alternative', 'alternative2']
+        fields = ['id', 'name', 'command', 'category', 'muzzle', 'barrel', 'laser', 'optic', 'stock', 'underbarrel', 'magazine', 'ammunition', 'reargrip', 'perk', 'perk2', 'alternative', 'alternative2']
 
 
 class WeaponCategorySerializer(serializers.ModelSerializer):
