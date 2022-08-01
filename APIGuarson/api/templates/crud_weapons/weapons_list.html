@@ -20,7 +20,7 @@
                 {% for weapon in page_obj %}
                 <tr>
                     <td class="text-center">{{ weapon.name }}</td>
-                    <td class="text-center"><a class="btn btn-link" href="/weapon/{{ weapon.command }}">/{{ weapon.command }}</a></td>
+                    <td class="text-center"><a class="btn btn-link" href="/weapon/{{ weapon.command.name }}">/{{ weapon.command.name }}</a></td>
                     <td class="text-center">{{ weapon.category }}</td>
                     {% if request.user.is_staff %}
                         <td class="text-center">

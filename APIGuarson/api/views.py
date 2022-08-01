@@ -179,6 +179,7 @@ class WeaponView(ListView):
         return redirect('/weapon/list')
 
     def weaponDetail(request, command):
+        command = Command.objects.filter(name__icontains=command)[0]
         weapon = Weapon.objects.filter(command=command).first()
         return render(request, 'crud_weapons/weapon_detail.html', {"weapon": weapon})
 
@@ -208,7 +209,7 @@ class WeaponView(ListView):
         if request.method == "POST":
             weapons = Weapon.objects.filter(name__icontains=request.POST['searched']).order_by('command')
         else:
-            weapons = Weapon.objects.all().order_by('command')
+            weapons = Weapon.objects.all().order_by('command__name')
 
         paginator = Paginator(weapons, 12)
         page_number = request.GET.get('page')
@@ -244,9 +245,9 @@ class WeaponApi(APIView):
         for weapons in request.data:
             try:
                 command = Command.objects.create(
-                    name=weapons['command'],
-                    category=weapons['category']
-                )
+                                name=weapons['command'],
+                                category=weapons['category']
+                            )
                 Weapon.objects.create(
                     command=command,
                     category=weapons['category'],
