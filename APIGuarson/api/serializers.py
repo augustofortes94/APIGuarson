@@ -17,6 +17,8 @@ class WeaponSerializer(serializers.ModelSerializer):
 
 
 class WeaponCategorySerializer(serializers.ModelSerializer):
+    command = serializers.CharField(source='command.name', read_only=True)
+    
     class Meta:
         model = Weapon
         fields = ['command']

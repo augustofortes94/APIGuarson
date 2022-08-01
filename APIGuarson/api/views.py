@@ -318,7 +318,7 @@ class WeaponCategoryApi(APIView):
     @api_login_required
     def get(self, request, *args, **kwargs):        
         data = {}
-        categories = Weapon.objects.order_by('category').values('category').distinct()  # get the different categories
+        categories = Command.objects.order_by('category').values('category').distinct()  # get the different categories
         
         for category in categories:
             commands = Weapon.objects.filter(category=category['category']).order_by('command')
