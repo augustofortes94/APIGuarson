@@ -223,18 +223,19 @@ class WeaponApi(APIView):
 
     @api_login_required
     def get(self, request, *args, **kwargs):
-        if request.GET.get('id'):
-            weapons = Weapon.objects.filter(id=request.GET.get('id'))
-        elif request.GET.get('command'):
-            weapons = Weapon.objects.filter(command__icontains=request.GET.get('command'))
-        else:           # GET ALL
-            weapons = Weapon.objects.all()
+        try:
+            if request.GET.get('id'):
+                weapons = Weapon.objects.filter(id=request.GET.get('id'))
+            elif request.GET.get('command'):
+                command = Command.objects.filter(name__icontains=request.GET.get('command'))[0]
+                weapons = Weapon.objects.select_related().filter(command=command)
+            else:           # GET ALL
+                weapons = Weapon.objects.all()
 
-        print('holaaaaaa')
-        serializer = WeaponSerializer(weapons, many=True)
-        if weapons:
-            return Response({'message': "Success", 'weapons': serializer.data}, status=status.HTTP_202_ACCEPTED)
-        else:
+            serializer = WeaponSerializer(weapons, many=True)
+            if weapons:
+                return Response({'message': "Success", 'weapons': serializer.data}, status=status.HTTP_202_ACCEPTED)
+        except:
             return Response({'message': "Error: weapon not found..."}, status=status.HTTP_404_NOT_FOUND)
 
     @api_login_required
