@@ -207,7 +207,7 @@ class WeaponView(ListView):
 
     def weaponList(request):
         if request.method == "POST":
-            weapons = Weapon.objects.filter(name__icontains=request.POST['searched']).order_by('command')
+            weapons = Weapon.objects.filter(name__icontains=request.POST['searched']).order_by('command__name')
         else:
             weapons = Weapon.objects.all().order_by('command__name')
 
@@ -319,7 +319,7 @@ class WeaponCategoryApi(APIView):
         categories = Command.objects.order_by('category').values('category').distinct()  # get the different categories
         
         for category in categories:
-            commands = Weapon.objects.filter(category=category['category']).order_by('command')
+            commands = Weapon.objects.filter(category=category['category']).order_by('command__name')
             serializer = WeaponCategorySerializer(commands, many=True)
             data[category['category']] = serializer.data
         return Response({'message': "Success", 'categories': data}, status=status.HTTP_202_ACCEPTED)
