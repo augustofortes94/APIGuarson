@@ -272,31 +272,28 @@ class WeaponApi(APIView):
     @api_login_required
     def put(self, request, *args, **kwargs):
         data = json.loads(request.body)
-        weapons = list(Weapon.objects.filter(command=data['command']).values())
-        if len(weapons) > 0:
-            weapon = Weapon.objects.get(command=data['command'])
-            weapon.command = data['command']
-            weapon.category = data['category']
-            weapon.name = data['name']
-            weapon.muzzle = data['muzzle']
-            weapon.barrel = data['barrel']
-            weapon.laser = data['laser']
-            weapon.optic = data['optic']
-            weapon.stock = data['stock']
-            weapon.underbarrel = data['underbarrel']
-            weapon.magazine = data['magazine']
-            weapon.ammunition = data['ammunition']
-            weapon.reargrip = data['reargrip']
-            weapon.perk = data['perk']
-            weapon.perk2 = data['perk2']
-            weapon.alternative = data['alternative']
-            weapon.alternative2 = data['alternative2']
-            weapon.save()
-            serializer = WeaponSerializer(data=vars(weapon))
-            serializer.is_valid(raise_exception=True)
-            return Response({'message': "Success", 'weapons': serializer.data}, status=status.HTTP_202_ACCEPTED)
-        else:
-            return Response({'message': "Error: weapon not found..."}, status=status.HTTP_404_NOT_FOUND)
+        command = Command.objects.filter(name__icontains=data['command'])[0]
+        weapon = Weapon.objects.select_related().get(command=command)
+        weapon.category = data['category']
+        weapon.name = data['name']
+        weapon.muzzle = data['muzzle']
+        weapon.barrel = data['barrel']
+        weapon.laser = data['laser']
+        weapon.optic = data['optic']
+        weapon.stock = data['stock']
+        weapon.underbarrel = data['underbarrel']
+        weapon.magazine = data['magazine']
+        weapon.ammunition = data['ammunition']
+        weapon.reargrip = data['reargrip']
+        weapon.perk = data['perk']
+        weapon.perk2 = data['perk2']
+        weapon.alternative = data['alternative']
+        weapon.alternative2 = data['alternative2']
+        weapon.save()
+        print(weapon)
+        serializer = WeaponSerializer(data=weapon)
+        serializer.is_valid(raise_exception=True)
+        return Response({'message': "Success", 'weapons': serializer.data}, status=status.HTTP_202_ACCEPTED)
 
     @api_login_required
     def delete(self, request, id, *args, **kwargs):
