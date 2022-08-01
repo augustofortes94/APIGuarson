@@ -72,8 +72,6 @@ class ModeLobbyView(ListView):
     @login_required
     @user_passes_test(lambda u: u.is_superuser)
     def modeAdd(request):
-        print(request.POST)
-        print(type(request))
         try:
             Lobby.objects.get(mode=request.POST['mode'])
             Lobby.objects.get(name=request.POST['name'])
@@ -127,7 +125,10 @@ class WeaponView(ListView):
     @user_passes_test(lambda u: u.is_staff)
     def edit(request, data, id):
         weapon = Weapon.objects.get(id=id)
-        weapon.command = data['command']
+        command = Command.objects.get(id=weapon.command.id)
+        command.name = data['command']
+        command.category = data['category']
+
         weapon.category = data['category']
         weapon.name = data['name']
         weapon.muzzle = data['muzzle']
@@ -144,6 +145,7 @@ class WeaponView(ListView):
         weapon.alternative = data['alternative']
         weapon.alternative2 = data['alternative2']
         weapon.save()
+        command.save()
 
     @login_required
     @user_passes_test(lambda u: u.is_staff)
@@ -175,6 +177,7 @@ class WeaponView(ListView):
     def weaponDelete(request, id):
         weapon = Weapon.objects.get(id=id)
         Weapon.objects.filter(id=id).delete()
+        Command.objects.filter(id=weapon.command.id).delete()
         messages.success(request,  weapon.name + ' ha sido eliminada')
         return redirect('/weapon/list')
 
@@ -186,6 +189,7 @@ class WeaponView(ListView):
     @login_required
     @user_passes_test(lambda u: u.is_staff)
     def weaponEdit(request, command):
+        command = Command.objects.filter(name__icontains=command)[0]
         weapon = Weapon.objects.filter(command=command).first()
         return render(request, 'crud_weapons/weapon_edit.html', {"weapon": weapon})
 
@@ -291,7 +295,6 @@ class WeaponApi(APIView):
         weapon.alternative = data['alternative']
         weapon.alternative2 = data['alternative2']
         weapon.save()
-        print(weapon)
         serializer = WeaponSerializer(data=weapon)
         serializer.is_valid(raise_exception=True)
         return Response({'message': "Success", 'weapons': serializer.data}, status=status.HTTP_202_ACCEPTED)
@@ -304,6 +307,7 @@ class WeaponApi(APIView):
             return Response({'message': "Error: weapon not found..."}, status=status.HTTP_404_NOT_FOUND)
         
         Weapon.objects.filter(id=id).delete()
+        Command.objects.filter(id=weapon.command.id).delete()
         serializer = WeaponSerializer(weapon)
         return Response({'message': "Success", 'weapons': serializer.data}, status=status.HTTP_202_ACCEPTED)
 
