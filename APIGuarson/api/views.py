@@ -22,14 +22,20 @@ class CommandApi(APIView):
 
     @api_login_required
     def get(self, request, *args, **kwargs):
-        data = {}
-        categories = Command.objects.order_by('category').values('category').distinct()  # get the different categories
-        
-        for category in categories:
-            commands = Command.objects.filter(category=category['category']).order_by('name')
-            serializer = CommandSerializer(commands, many=True)
-            data[category['category']] = serializer.data
-        return Response({'message': "Success", 'categories': data}, status=status.HTTP_202_ACCEPTED)
+        if request.GET.get('command'):  # GET BY COMMAND
+            command = Command.objects.filter(name=request.GET.get('command')).values()
+            print(command)
+            serializer = CommandSerializer(command)
+            return Response({'message': "Success", 'command': serializer.data}, status=status.HTTP_202_ACCEPTED)
+        else:
+            data = {}
+            categories = Command.objects.order_by('category').values('category').distinct()  # get the different categories
+            
+            for category in categories:
+                commands = Command.objects.filter(category=category['category']).order_by('name')
+                serializer = CommandSerializer(commands, many=True)
+                data[category['category']] = serializer.data
+            return Response({'message': "Success", 'categories': data}, status=status.HTTP_202_ACCEPTED)
 
 
 class CommandView(ListView):
