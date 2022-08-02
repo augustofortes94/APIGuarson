@@ -1,5 +1,5 @@
 import json
-from .serializers import LobbySerializer, WeaponCategorySerializer, WeaponSerializer
+from .serializers import LobbySerializer, WeaponCategorySerializer, WeaponSerializer, CommandSerializer
 from .models import Lobby, Weapon, Command
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -13,6 +13,23 @@ from rest_framework import status, viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from user.decorators import api_login_required
+
+
+class CommandApi(APIView):
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+    @api_login_required
+    def get(self, request, *args, **kwargs):
+        data = {}
+        categories = Command.objects.order_by('category').values('category').distinct()  # get the different categories
+        
+        for category in categories:
+            commands = Command.objects.filter(category=category['category']).order_by('name')
+            serializer = CommandSerializer(commands, many=True)
+            data[category['category']] = serializer.data
+        return Response({'message': "Success", 'categories': data}, status=status.HTTP_202_ACCEPTED)
 
 
 class CommandView(ListView):
@@ -82,6 +99,7 @@ class CommandView(ListView):
         command.save()
         messages.success(request, data['name'] + ' ha sido modificado')
         return redirect('/command/list')
+
 
 class ModeLobbyApi(viewsets.ModelViewSet):
     queryset = Lobby.objects.all()

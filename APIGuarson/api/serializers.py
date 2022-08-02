@@ -24,6 +24,12 @@ class WeaponCategorySerializer(serializers.ModelSerializer):
         fields = ['command']
 
 
+class CommandSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Command
+        fields = ['name', 'text', 'parameter1', 'parameter2']
+
+
 class LobbySerializer(serializers.ModelSerializer):
     map = serializers.CharField(required=False)
 

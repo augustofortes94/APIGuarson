@@ -1,4 +1,4 @@
-from .views import ModeLobbyView, WeaponApi, WeaponCategoryApi, WeaponView, CommandView
+from .views import ModeLobbyView, WeaponApi, WeaponCategoryApi, WeaponView, CommandView, CommandApi
 from django.urls import path, include
 from . import views
 from rest_framework import routers
@@ -15,6 +15,7 @@ urlpatterns = [
     # API
     path('api/', include(router.urls), name='api_mode_lobby'),  # include api for lobby modes
     path('api/categories/', WeaponCategoryApi.as_view(), name='api_category_list'),
+    path('api/commands/', CommandApi.as_view(), name='api_commands'),
     path('api/login/', ApiLogin.as_view(), name='api_login'),
     path('api/weapons/', WeaponApi.as_view(), name='api_weapon_list'),
     path('api/weapons/<int:id>', WeaponApi.as_view(), name='api_delete_by_id'),
