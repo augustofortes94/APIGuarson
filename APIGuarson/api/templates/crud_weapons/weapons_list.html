@@ -24,9 +24,9 @@
                     <td class="text-center">{{ weapon.category }}</td>
                     {% if request.user.is_staff %}
                         <td class="text-center">
-                            <a class="btn" href="/weapon/edit/{{ weapon.command.name }}"><i class="fa-regular fa-pen-to-square"></i></a>
+                            <a class="btn" href="/weapon/edit/{{ weapon.command.name }}"><i class="fa-regular fa-pen-to-square"></i></a>    <!-- Edit -->
                             {% if request.user.is_superuser %}
-                                <a class="btn ms-3" href="/weapon/delete/{{ weapon.id }}"><i class="fa-regular fa-trash-can"></i></a>
+                                <a class="btn ms-3" href="/weapon/delete/{{ weapon.id }}"><i class="fa-regular fa-trash-can"></i></a>   <!-- Delete -->
                             {% endif %}
                         </td>
                     {% endif %}

@@ -4,6 +4,7 @@ from .models import Lobby, Weapon, Command
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.paginator import Paginator
+from django.db.models import Q
 from django.shortcuts import redirect, render
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
@@ -13,6 +14,74 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from user.decorators import api_login_required
 
+
+class CommandView(ListView):
+    @login_required
+    @user_passes_test(lambda u: u.is_superuser)
+    def commandList(request):
+        categories = Command.objects.filter(Q(category='Bonus') | Q(category='Lobbys') | Q(category='Streamers')).order_by('category', 'name')
+        paginator = Paginator(categories, 12)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        return render(request, 'crud_commands/commands_list.html', {'page_obj': page_obj})
+
+    @login_required
+    @user_passes_test(lambda u: u.is_superuser)
+    def commandAddForm(request):
+        return render(request, 'crud_commands/commands_add.html')
+
+    @login_required
+    @user_passes_test(lambda u: u.is_superuser)
+    def commandAdd(request):
+        try:
+            Command.objects.get(name=request.POST['name'])
+            messages.warning(request, 'El comando ya existe')
+        except:
+            Command.objects.create(
+                name=request.POST['name'],
+                category=request.POST['category'],
+                text=request.POST['text'],
+                parameter1=request.POST['parameter1'],
+                parameter2=request.POST['parameter1']
+            )
+            messages.success(request, request.POST['name'] + ' ha sido creado')
+        return redirect('/command/list')
+
+    @login_required
+    @user_passes_test(lambda u: u.is_superuser)
+    def commandDelete(request, id):
+        command = Command.objects.get(id=id)
+        Command.objects.filter(id=id).delete()
+        messages.success(request,  command.name + ' ha sido eliminado')
+        return redirect('/command/list')
+
+    @login_required
+    @user_passes_test(lambda u: u.is_superuser)
+    def commandEdit(request, id):
+        command = Command.objects.get(id=id)
+        return render(request, 'crud_commands/commands_edit.html', {"command": command})
+
+    @login_required
+    @user_passes_test(lambda u: u.is_superuser)
+    def commandEdition(request, id):
+        data = {}
+        for key in request.POST:
+            if key == 'csrfmiddlewaretoken':
+                pass
+            elif request.POST[key] == 'None' or request.POST[key] == "":
+                data[key] = None
+            else:
+                data[key] = request.POST[key]
+        data = json.loads(json.dumps(data))
+        command = Command.objects.get(id=id)
+        command.name = data['name']
+        command.category = data['category']
+        command.text = data['text']
+        command.parameter1 = data['parameter1']
+        command.parameter2 = data['parameter2']
+        command.save()
+        messages.success(request, data['name'] + ' ha sido modificado')
+        return redirect('/command/list')
 
 class ModeLobbyApi(viewsets.ModelViewSet):
     queryset = Lobby.objects.all()

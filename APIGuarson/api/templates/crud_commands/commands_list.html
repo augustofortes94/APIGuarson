@@ -1,0 +1,50 @@
+{% extends "../layout.html" %}
+
+{% block title %} Guarson App {% endblock %}
+
+
+{% block body %}
+    <h4 class="text-center">Commands</h4>
+    
+    <div class="container">
+        <div id="table-weapons-list" class="d-flex justify-content-center py-2">
+            <table class="table table-hover table-striped ">
+                <tr class="table-info">
+                    <th class="text-center">Category</th>
+                    <th class="text-center">Comando</th>
+                    <th class="text-center">Opciones</th>
+                </tr>
+                {% for command in page_obj %}
+                <tr>
+                    <td class="text-center">{{ command.category }}</td>
+                    <td class="text-center">{{ command.name }}</td>
+                    <td class="text-center">
+                        <a class="btn ms-3" href="/command/edit/{{ command.id }}"><i class="fa-regular fa-pen-to-square"></i></a>  <!-- Edit -->
+                        <a class="btn ms-3" href="/command/delete/{{ command.id }}"><i class="fa-regular fa-trash-can"></i></a>  <!-- Delete -->
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        <div class="pagination d-flex justify-content-center mb-4">
+            <span class="step-links">
+                {% if page_obj.has_previous %}
+                    <a href="?page=1"><i class="fa-solid fa-backward-fast"></i></a>
+                    <a class="ms-2" href="?page={{ page_obj.previous_page_number }}"><i class="fa-solid fa-backward"></i></a>
+                {% endif %}
+
+                <span class="current ms-2 me-2">
+                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                </span>
+
+                {% if page_obj.has_next %}
+                    <a class="me-2" href="?page={{ page_obj.next_page_number }}"><i class="fa-solid fa-forward"></i></a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}"><i class="fa-solid fa-forward-fast"></i></a>
+                {% endif %}
+            </span>
+        </div>
+        <div class="d-grid gap-2 col-1 mx-auto">
+            <a class="btn btn-warning" href="/command/addform">Add</a>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends "../layout.html" %}
+
+{% block title %} Edit Command {% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="d-flex justify-content-center">
+            <div class="card w-100">
+                <h3 class="text-center pt-1">Editar {{ command.name }}</h2>
+                <div class="card-body">
+                    <form id="edit-command" action="/command/edition/{{ command.id }}" method="POST" name="edit-command-form">{% csrf_token %}
+                        <div class="input-group pt-2">
+                            <span class="input-group-text" id="basic-addon3">Command</span>
+                            <input type="text" class="form-control" id="edit-name" name="name" value="{{ command.name }}" required>
+                        </div>
+                        <div class="input-group pt-2">
+                            <label class="input-group-text" for="inputGroupSelect01">Category</label>
+                            <select class="form-select" id="edit-category" name="category" required>
+                                <option value={{ command.category }} selected>{{ command.category }}</option>
+                                <option value="Bonus">Bonus</option>
+                                <option value="Lobbys">Lobbys</option>
+                                <option value="Streamers">Streamers</option>
+                            </select>
+                        </div>
+                        <div class="input-group pt-2">
+                            <span class="input-group-text" id="basic-addon3">text</span>
+                            <input type="text" class="form-control" id="edit-text" name="text" value="{{ command.text }}">
+                        </div>
+                        <div class="input-group pt-2">
+                            <span class="input-group-text" id="basic-addon3">Parameter 1</span>
+                            <input type="text" class="form-control" id="edit-parameter1" name="parameter1" value="{{ command.parameter1 }}">
+                        </div>
+                        <div class="input-group pt-2">
+                            <span class="input-group-text" id="basic-addon3">Parameter 2</span>
+                            <input type="text" class="form-control" id="edit-parameter2" name="parameter2" value="{{ command.parameter2 }}">
+                        </div>
+                        <div class="form-group pt-2">
+                            <button type="submit" class="btn btn-success btn-block text-white">Edit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

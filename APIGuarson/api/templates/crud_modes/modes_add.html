@@ -1,6 +1,6 @@
 {% extends "../layout.html" %}
 
-{% block title %} Add Weapon {% endblock %}
+{% block title %} Add Mode {% endblock %}
 
 {% block body %}
     <div class="row">
@@ -8,7 +8,7 @@
             <div class="card w-100">
                 <h3 class="text-center pt-1">Agregar Modo</h2>
                 <div class="card-body">
-                    <form id="add-weapon" action="/mode/add" method="POST" name="add-mode-form">{% csrf_token %}
+                    <form id="add-mode" action="/mode/add" method="POST" name="add-mode-form">{% csrf_token %}
                         <div class="input-group pt-2">
                             <span class="input-group-text" id="basic-addon3">Mode</span>
                             <input type="text" class="form-control" id="add-mode" name="mode" required>

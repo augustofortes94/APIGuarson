@@ -1,4 +1,4 @@
-from .views import ModeLobbyView, WeaponApi, WeaponCategoryApi, WeaponView
+from .views import ModeLobbyView, WeaponApi, WeaponCategoryApi, WeaponView, CommandView
 from django.urls import path, include
 from . import views
 from rest_framework import routers
@@ -18,6 +18,14 @@ urlpatterns = [
     path('api/login/', ApiLogin.as_view(), name='api_login'),
     path('api/weapons/', WeaponApi.as_view(), name='api_weapon_list'),
     path('api/weapons/<int:id>', WeaponApi.as_view(), name='api_delete_by_id'),
+    
+    # COMMANDS
+    path('command/list/', CommandView.commandList, name='commands_list'),
+    path('command/addform', CommandView.commandAddForm, name='commands_addform'),
+    path('command/add', CommandView.commandAdd, name='commands_add'),
+    path('command/delete/<int:id>', CommandView.commandDelete, name='command_delete_by_id'),
+    path('command/edit/<int:id>', CommandView.commandEdit, name='commands_edit'),
+    path('command/edition/<int:id>', CommandView.commandEdition, name='commands_edition'),
 
     # MODE MAPS
     path('mode/list/', ModeLobbyView.modesList, name='map_modes_list'),
