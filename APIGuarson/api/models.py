@@ -4,7 +4,7 @@ from django.db import models
 class Command(models.Model):
     name = models.CharField(max_length=50, unique=True)
     category = models.CharField(max_length=50)
-    text = models.CharField(max_length=50, null=True, blank=True, default=None)
+    text = models.CharField(max_length=500, null=True, blank=True, default=None)
     parameter1 = models.CharField(max_length=50, null=True, blank=True, default=None)
     parameter2 = models.CharField(max_length=50, null=True, blank=True, default=None)
 
