@@ -23,7 +23,7 @@ class CommandApi(APIView):
     @api_login_required
     def get(self, request, *args, **kwargs):
         try:    # get by command
-            command = Command.objects.get(name=request.GET.get('command'))
+            command = Command.objects.filter(name__istartswith=request.GET.get('command')).values()[0]
             serializer = CommandSerializer(command)
             return Response({'message': "Success", 'command': serializer.data}, status=status.HTTP_202_ACCEPTED)
         except:
