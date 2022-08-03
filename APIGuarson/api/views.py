@@ -1,6 +1,6 @@
 import json
-from .serializers import LobbySerializer, WeaponCategorySerializer, WeaponSerializer, CommandSerializer
-from .models import Lobby, Weapon, Command
+from .serializers import CommandSerializer, LobbySerializer, WeaponSerializer
+from .models import Command, Lobby, Weapon
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.paginator import Paginator
@@ -22,20 +22,22 @@ class CommandApi(APIView):
 
     @api_login_required
     def get(self, request, *args, **kwargs):
-        if request.GET.get('command'):  # GET BY COMMAND
-            command = Command.objects.filter(name=request.GET.get('command')).values()
-            print(command)
+        try:    # get by command
+            command = Command.objects.get(name=request.GET.get('command'))
             serializer = CommandSerializer(command)
             return Response({'message': "Success", 'command': serializer.data}, status=status.HTTP_202_ACCEPTED)
-        else:
-            data = {}
-            categories = Command.objects.order_by('category').values('category').distinct()  # get the different categories
-            
-            for category in categories:
-                commands = Command.objects.filter(category=category['category']).order_by('name')
-                serializer = CommandSerializer(commands, many=True)
-                data[category['category']] = serializer.data
-            return Response({'message': "Success", 'categories': data}, status=status.HTTP_202_ACCEPTED)
+        except:
+            try:
+                data = {}
+                categories = Command.objects.order_by('category').values('category').distinct()  # get the different categories
+                
+                for category in categories:
+                    commands = Command.objects.filter(category=category['category']).order_by('name')
+                    serializer = CommandSerializer(commands, many=True)
+                    data[category['category']] = serializer.data
+                return Response({'message': "Success", 'categories': data}, status=status.HTTP_202_ACCEPTED)
+            except:
+                return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class CommandView(ListView):
@@ -403,20 +405,3 @@ class WeaponApi(APIView):
         Command.objects.filter(id=weapon.command.id).delete()
         serializer = WeaponSerializer(weapon)
         return Response({'message': "Success", 'weapons': serializer.data}, status=status.HTTP_202_ACCEPTED)
-
-
-class WeaponCategoryApi(APIView):
-    @method_decorator(csrf_exempt)
-    def dispatch(self, request, *args, **kwargs):
-        return super().dispatch(request, *args, **kwargs)
-
-    @api_login_required
-    def get(self, request, *args, **kwargs):        
-        data = {}
-        categories = Command.objects.order_by('category').values('category').distinct()  # get the different categories
-        
-        for category in categories:
-            commands = Weapon.objects.filter(category=category['category']).order_by('command__name')
-            serializer = WeaponCategorySerializer(commands, many=True)
-            data[category['category']] = serializer.data
-        return Response({'message': "Success", 'categories': data}, status=status.HTTP_202_ACCEPTED)
