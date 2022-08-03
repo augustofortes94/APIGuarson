@@ -62,14 +62,22 @@ class CommandView(ListView):
             Command.objects.get(name=request.POST['name'])
             messages.warning(request, 'El comando ya existe')
         except:
+            data = {}
+            for key in request.POST:
+                if key == 'csrfmiddlewaretoken':
+                    pass
+                elif request.POST[key] == 'None' or request.POST[key] == "":
+                    data[key] = None
+                else:
+                    data[key] = request.POST[key]
             Command.objects.create(
-                name=request.POST['name'],
-                category=request.POST['category'],
-                text=request.POST['text'],
-                parameter1=request.POST['parameter1'],
-                parameter2=request.POST['parameter2']
+                name=data['name'],
+                category=data['category'],
+                text=data['text'],
+                parameter1=data['parameter1'],
+                parameter2=data['parameter2']
             )
-            messages.success(request, request.POST['name'] + ' ha sido creado')
+            messages.success(request, data['name'] + ' ha sido creado')
         return redirect('/command/list')
 
     @login_required
@@ -245,19 +253,19 @@ class WeaponView(ListView):
     @login_required
     @user_passes_test(lambda u: u.is_staff)
     def weaponAdd(request):
-        data = {}
-        for key in request.POST:
-            if key == 'csrfmiddlewaretoken':
-                pass
-            elif request.POST[key] == 'None' or request.POST[key] == "":
-                data[key] = None
-            else:
-                data[key] = request.POST[key]
-        data = json.loads(json.dumps(data))
         try:
-            Weapon.objects.get(command=data['command'])
-            messages.warning(request, data['command'] + ' ya existe')
+            Weapon.objects.get(command=request.POST['command'])
+            messages.warning(request, request.POST['command'] + ' ya existe')
         except:
+            data = {}
+            for key in request.POST:
+                if key == 'csrfmiddlewaretoken':
+                    pass
+                elif request.POST[key] == 'None' or request.POST[key] == "":
+                    data[key] = None
+                else:
+                    data[key] = request.POST[key]
+            data = json.loads(json.dumps(data))
             WeaponView.add(request, data)
             messages.success(request, data['name'] + ' ha sido creada')
         return redirect('/weapon/list')
