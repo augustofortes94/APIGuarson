@@ -67,7 +67,7 @@ class CommandView(ListView):
                 category=request.POST['category'],
                 text=request.POST['text'],
                 parameter1=request.POST['parameter1'],
-                parameter2=request.POST['parameter1']
+                parameter2=request.POST['parameter2']
             )
             messages.success(request, request.POST['name'] + ' ha sido creado')
         return redirect('/command/list')
