@@ -27,18 +27,25 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0 w-100">
-                        <li class="nav-item">
-                            <a class="nav-item nav-link" href="/weapon/list"><i class="fa-solid fa-house"></i></a>  <!-- Home -->
-                        </li>
-                        {% if request.user.is_superuser %}
+                        
+                        {% if request.user.is_superuser or request.user.is_staff %}
                             <li class="nav-item">
-                                <a class="nav-item nav-link" href="/user/list"><i class="fa-solid fa-user-pen"></i></a> <!-- Edit users -->
+                                <a class="nav-item nav-link" href="/weapon/list"><i class="fa-solid fa-house"></i></a>  <!-- Home -->
                             </li>
+                            {% if request.user.is_superuser %}
+                                <li class="nav-item">
+                                    <a class="nav-item nav-link" href="/user/list"><i class="fa-solid fa-user-pen"></i></a> <!-- Edit users -->
+                                </li>
+                            {% endif %}
                             <li class="nav-item">
                                 <a class="nav-item nav-link" href="/mode/list"><i class="fa-solid fa-map-location-dot"></i></a> <!-- Edit modes -->
                             </li>
                             <li class="nav-item w-25">
                                 <a class="nav-item nav-link" href="/command/list"><i class="fa-solid fa-terminal"></i></a> <!-- Edit commands -->
+                            </li>
+                        {% else %}
+                            <li class="nav-item w-25">
+                                <a class="nav-item nav-link" href="/weapon/list"><i class="fa-solid fa-house"></i></a>  <!-- Home -->
                             </li>
                         {% endif %}
                         <li class="nav-item d-flex justify-content w-75">
