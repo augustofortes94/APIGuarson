@@ -339,7 +339,6 @@ class WeaponApi(APIView):
                 weapons = Weapon.objects.select_related().filter(command=command)
             else:           # GET ALL
                 weapons = Weapon.objects.all()
-
             serializer = WeaponSerializer(weapons, many=True)
             if weapons:
                 return Response({'message': "Success", 'weapons': serializer.data}, status=status.HTTP_202_ACCEPTED)
