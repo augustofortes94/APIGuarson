@@ -333,17 +333,15 @@ class WeaponApi(APIView):
     def get(self, request, *args, **kwargs):
         try:
             if request.GET.get('id'):
-                weapons = Weapon.objects.filter(id=request.GET.get('id'))
+                weapons = Weapon.objects.get(id=request.GET.get('id'))
             elif request.GET.get('command'):
-                command = Command.objects.filter(name__icontains=request.GET.get('command'))[0]
+                command = Command.objects.get(name__icontains=request.GET.get('command'))[0]
                 weapons = Weapon.objects.select_related().filter(command=command)
             else:           # GET ALL
                 weapons = Weapon.objects.all()
             serializer = WeaponSerializer(weapons, many=True)
             if weapons:
                 return Response({'message': "Success", 'weapons': serializer.data}, status=status.HTTP_202_ACCEPTED)
-            else:
-                return Response({'message': "Error: weapon not found..."}, status=status.HTTP_404_NOT_FOUND)
         except:
             return Response({'message': "Error: weapon not found..."}, status=status.HTTP_404_NOT_FOUND)
 
