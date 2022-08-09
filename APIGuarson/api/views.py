@@ -335,7 +335,7 @@ class WeaponApi(APIView):
             if request.GET.get('id'):
                 weapons = Weapon.objects.get(id=request.GET.get('id'))
             elif request.GET.get('command'):
-                command = Command.objects.get(name__icontains=request.GET.get('command'))[0]
+                command = Command.objects.filter(name__icontains=request.GET.get('command'))[0]
                 weapons = Weapon.objects.select_related().filter(command=command)
             else:           # GET ALL
                 weapons = Weapon.objects.all()
