@@ -343,6 +343,8 @@ class WeaponApi(APIView):
             serializer = WeaponSerializer(weapons, many=True)
             if weapons:
                 return Response({'message': "Success", 'weapons': serializer.data}, status=status.HTTP_202_ACCEPTED)
+            else:
+                return Response({'message': "Error: weapon not found..."}, status=status.HTTP_404_NOT_FOUND)
         except:
             return Response({'message': "Error: weapon not found..."}, status=status.HTTP_404_NOT_FOUND)
 
