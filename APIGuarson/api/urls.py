@@ -18,7 +18,7 @@ urlpatterns = [
     path('api/login/', ApiLogin.as_view(), name='api_login'),
     path('api/weapons/', WeaponApi.as_view(), name='api_weapon_list'),
     path('api/weapons/<int:id>', WeaponApi.as_view(), name='api_delete_by_id'),
-    
+
     # COMMANDS
     path('command/list/', CommandView.commandList, name='commands_list'),
     path('command/addform', CommandView.commandAddForm, name='commands_addform'),
