@@ -19,15 +19,12 @@ class ApiLogin(APIView):
         return super().dispatch(request, *args, **kwargs)
 
     def post(self, request):
-        username = request.data['username']
-        password = request.data['password']
-
-        user = User.objects.filter(username=username).first()
+        user = User.objects.filter(username=request.data['username']).first()
         if user is None:
             return Response({'message': "Error: user not found..."}, status=status.HTTP_404_NOT_FOUND)
 
         else:
-            if not user.check_password(password):
+            if not user.check_password(request.data['password']):
                 return Response({'message': "incorrect password..."}, status=status.HTTP_401_UNAUTHORIZED)
 
             payload = {
