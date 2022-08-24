@@ -202,7 +202,7 @@ class WeaponView(ListView):
     @user_passes_test(lambda u: u.is_staff)
     def add(request, data):
         command = Command.objects.create(
-                    command=data['command'],
+                    name=data['command'],
                     category=data['category']
                     )
         Weapon.objects.create(
@@ -254,8 +254,7 @@ class WeaponView(ListView):
     @user_passes_test(lambda u: u.is_staff)
     def weaponAdd(request):
         try:
-            command = Command.objects.get(name=request.POST['command'])
-            Weapon.objects.get(command=command)
+            Weapon.objects.get(command__name=request.POST['command'])
             messages.warning(request, request.POST['command'] + ' ya existe')
         except:
             data = {}
