@@ -39,6 +39,24 @@ class CommandApi(APIView):
             except:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
 
+    @api_login_required
+    def post(self, request, *args, **kwargs):
+        error = {}
+        success = {}
+        for command in request.data:
+            try:
+                Command.objects.create(
+                                name=command['name'],
+                                category=command['category'],
+                                text=command['text'],
+                                parameter1=command['parameter1'],
+                                parameter2=command['parameter2']
+                            )
+                success[command['name']] = 'Added'
+            except:
+                error[command['name']] = 'Error: not added'
+        return Response({'message': "Success", 'Commands added': success, 'Commands not added': error}, status=status.HTTP_200_OK)
+
 
 class CommandView(ListView):
     @login_required
@@ -232,7 +250,6 @@ class WeaponView(ListView):
         command.name = data['command']
         command.category = data['category']
 
-        #print(data)
         weapon.category = data['category']
         weapon.name = data['name']
         weapon.muzzle = data['muzzle']
@@ -308,7 +325,6 @@ class WeaponView(ListView):
                 data[key] = None
             else:
                 data[key] = request.POST[key]
-        print(request.POST)
         data = json.loads(json.dumps(data))
         WeaponView.edit(request, data, id)
         messages.success(request, data['name'] + ' ha sido modificada')
@@ -349,6 +365,7 @@ class WeaponApi(APIView):
     @api_login_required
     def post(self, request, *args, **kwargs):
         error = {}
+        success = {}
         for weapons in request.data:
             try:
                 command = Command.objects.create(
@@ -373,9 +390,10 @@ class WeaponApi(APIView):
                     alternative=weapons['alternative'],
                     alternative2=weapons['alternative2']
                 )
+                success[weapons['command']] = 'Added'
             except:
                 error[weapons['command']] = 'Error: not added'
-        return Response({'message': "Success", 'weapons not added': error}, status=status.HTTP_200_OK)
+        return Response({'message': "Success", 'Weapons added': success, 'Weapons not added': error}, status=status.HTTP_200_OK)
 
     @api_login_required
     def put(self, request, *args, **kwargs):
