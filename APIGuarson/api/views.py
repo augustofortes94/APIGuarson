@@ -232,6 +232,7 @@ class WeaponView(ListView):
         command.name = data['command']
         command.category = data['category']
 
+        #print(data)
         weapon.category = data['category']
         weapon.name = data['name']
         weapon.muzzle = data['muzzle']
@@ -307,6 +308,7 @@ class WeaponView(ListView):
                 data[key] = None
             else:
                 data[key] = request.POST[key]
+        print(request.POST)
         data = json.loads(json.dumps(data))
         WeaponView.edit(request, data, id)
         messages.success(request, data['name'] + ' ha sido modificada')
