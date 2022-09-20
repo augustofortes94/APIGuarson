@@ -9,18 +9,20 @@ from django.shortcuts import redirect, render
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView
+from oauth2_provider.contrib.rest_framework import TokenHasReadWriteScope
 from rest_framework import status, viewsets
-from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from user.decorators import api_login_required
+from rest_framework.views import APIView
 
 
 class CommandApi(APIView):
+    permission_classes = [IsAuthenticated, TokenHasReadWriteScope]
+    
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
 
-    @api_login_required
     def get(self, request, *args, **kwargs):
         try:    # get by command
             command = Command.objects.filter(name__istartswith=request.GET.get('command')).values()[0]
@@ -39,7 +41,6 @@ class CommandApi(APIView):
             except:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
 
-    @api_login_required
     def post(self, request, *args, **kwargs):
         error = {}
         success = {}
@@ -136,15 +137,14 @@ class CommandView(ListView):
 
 
 class ModeLobbyApi(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated, TokenHasReadWriteScope]
     queryset = Lobby.objects.all()
     serializer_class = LobbySerializer
     lookup_field = 'mode'   # Search by mode and not for id
 
-    @api_login_required
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
 
-    @api_login_required
     def retrieve(self, request, *args, **kwargs):
         try:
             mode = Lobby.objects.filter(mode=self.get_object().mode).values()
@@ -152,7 +152,6 @@ class ModeLobbyApi(viewsets.ModelViewSet):
         except:
             return Response({'message': "Error: mode not found"}, status=status.HTTP_404_NOT_FOUND)
 
-    @api_login_required
     def create(self, request, *args, **kwargs):
         error = {}
         for modes in request.data:
@@ -166,11 +165,9 @@ class ModeLobbyApi(viewsets.ModelViewSet):
                 error[modes['mode']] = 'Error: not added'
         return Response({'message': "Success", 'modes not added': error}, status=status.HTTP_200_OK)
 
-    @api_login_required
     def destroy(self, request, *args, **kwargs):
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
     
-    @api_login_required
     def update(self, request, *args, **kwargs):
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
@@ -343,11 +340,12 @@ class WeaponView(ListView):
 
 
 class WeaponApi(APIView):
+    permission_classes = [IsAuthenticated, TokenHasReadWriteScope]
+    
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
 
-    @api_login_required
     def get(self, request, *args, **kwargs):
         try:
             if request.GET.get('id'):
@@ -362,7 +360,6 @@ class WeaponApi(APIView):
         except:
             return Response({'message': "Error: weapon not found..."}, status=status.HTTP_404_NOT_FOUND)
 
-    @api_login_required
     def post(self, request, *args, **kwargs):
         error = {}
         success = {}
@@ -395,7 +392,6 @@ class WeaponApi(APIView):
                 error[weapons['command']] = 'Error: not added'
         return Response({'message': "Success", 'Weapons added': success, 'Weapons not added': error}, status=status.HTTP_200_OK)
 
-    @api_login_required
     def put(self, request, *args, **kwargs):
         data = json.loads(request.body)
         command = Command.objects.filter(name__icontains=data['command'])[0]
@@ -420,7 +416,6 @@ class WeaponApi(APIView):
         serializer.is_valid(raise_exception=True)
         return Response({'message': "Success", 'weapons': serializer.data}, status=status.HTTP_202_ACCEPTED)
 
-    @api_login_required
     def delete(self, request, id, *args, **kwargs):
         try:
             weapon = Weapon.objects.get(id=id)

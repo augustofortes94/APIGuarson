@@ -1,4 +1,4 @@
-import jwt
+#import jwt
 import datetime
 from .forms import UserRegisterForm
 from django.contrib import messages
@@ -12,7 +12,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-
+"""
 class ApiLogin(APIView):
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
@@ -38,7 +38,7 @@ class ApiLogin(APIView):
             response.set_cookie(key='jwt', value=token, httponly=True)
             response.data = {'message': "Succes"}
             return response
-
+"""
 
 class RegisterUser(CreateView):
     def register(request):
