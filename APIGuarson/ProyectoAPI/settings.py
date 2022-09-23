@@ -2,6 +2,7 @@ import os
 from dotenv import load_dotenv
 from pathlib import Path
 from datetime import timedelta
+import dj_database_url
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -74,16 +75,20 @@ WSGI_APPLICATION = 'ProyectoAPI.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-DATABASES = {
-            'default': {
-                'ENGINE': 'django.db.backends.postgresql_psycopg2',
-                'HOST': os.getenv('DATABASE_HOST'),
-                'PORT': os.getenv('DATABASE_PORT'),
-                'USER': os.getenv('DATABASE_USER'),
-                'PASSWORD': os.getenv('DATABASE_PSW'),
-                'NAME': os.getenv('DATABASE_NAME')
+if os.getenv('DEBUG_MODE') == 'False':
+    DATABASES = {
+                'default': {
+                    'ENGINE': 'django.db.backends.postgresql_psycopg2',
+                    'HOST': os.getenv('DATABASE_HOST'),
+                    'PORT': os.getenv('DATABASE_PORT'),
+                    'USER': os.getenv('DATABASE_USER'),
+                    'PASSWORD': os.getenv('DATABASE_PSW'),
+                    'NAME': os.getenv('DATABASE_NAME')
+                    }
                 }
-            }
+else:
+    DATABASES = {'default': dj_database_url.config(default=os.environ['DB_URL'], engine='django_cockroachdb')}
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
