@@ -75,7 +75,7 @@ WSGI_APPLICATION = 'ProyectoAPI.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-if os.getenv('DEBUG_MODE') == 'False':
+if os.getenv('DEBUG_MODE') is not 'False':
     DATABASES = {
                 'default': {
                     'ENGINE': 'django.db.backends.postgresql_psycopg2',
