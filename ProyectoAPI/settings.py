@@ -75,7 +75,10 @@ WSGI_APPLICATION = 'ProyectoAPI.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-if os.getenv('DEBUG_MODE') == 'False':
+
+DATABASES = {'default': dj_database_url.config(default=os.environ['DB_URL'], engine='django_cockroachdb')}
+"""
+else:
     DATABASES = {
                 'default': {
                     'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -86,9 +89,7 @@ if os.getenv('DEBUG_MODE') == 'False':
                     'NAME': os.getenv('DATABASE_NAME')
                     }
                 }
-else:
-    DATABASES = {'default': dj_database_url.config(default=os.environ['DB_URL'], engine='django_cockroachdb')}
-
+"""
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
