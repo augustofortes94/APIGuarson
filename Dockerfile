@@ -7,4 +7,4 @@ RUN pip install -r requirements.txt
 
 COPY . .
 
-CMD [ "python", "APIGuarson/manage.py", "runserver"]
+CMD [ "python", "manage.py", "runserver"]
