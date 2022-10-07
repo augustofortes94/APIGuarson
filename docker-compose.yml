@@ -1,0 +1,73 @@
+version: "3.8"
+
+services:
+  web:
+    build: .
+    volumes:
+      - .:/app
+    ports:
+      - 8000:8000
+    image: app:django
+    environment:
+      - SECRET_KEY=${SECRET_KEY}
+      - DATABASE_HOST=${DATABASE_HOST}
+      - DATABASE_PORT=${DATABASE_PORT}
+      - DATABASE_USER=${DATABASE_USER}
+      - DATABASE_PSW=${DATABASE_PSW}
+      - DATABASE_NAME=${DATABASE_NAME}
+      - DEBUG_MODE=${DEBUG_MODE}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS}
+    container_name: apiguarson-app
+    command: python manage.py runserver 0.0.0.0:8000
+    networks:
+      - localnetwork
+
+  migration:
+    build: .
+    image: app:django
+    volumes:
+      - .:/app
+    environment:
+      - SECRET_KEY=${SECRET_KEY}
+      - DATABASE_HOST=${DATABASE_HOST}
+      - DATABASE_PORT=${DATABASE_PORT}
+      - DATABASE_USER=${DATABASE_USER}
+      - DATABASE_PSW=${DATABASE_PSW}
+      - DATABASE_NAME=${DATABASE_NAME}
+      - DEBUG_MODE=${DEBUG_MODE}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS}
+    command: python manage.py migrate
+    networks:
+      - localnetwork
+    depends_on:
+      - db
+
+  db:
+    image: postgres:14.4-alpine
+    container_name: ${DATABASE_HOST}
+    restart: always
+    environment:
+      - POSTGRES_USER=${DATABASE_USER}
+      - POSTGRES_PASSWORD=${DATABASE_PSW}
+      - POSTGRES_DB=${DATABASE_NAME}
+    ports:
+      - '5432:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - pgconf:/etc/postgresql
+      - pglog:/var/log/postgresql
+    networks:
+      - localnetwork
+
+volumes:
+  pgdata:
+    driver: local
+  pgconf:
+    driver: local
+  pglog: 
+    driver: local
+
+networks:
+  localnetwork:
+    name: APIGuarson-network
+    driver: bridge
