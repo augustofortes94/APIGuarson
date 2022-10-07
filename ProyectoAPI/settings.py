@@ -75,20 +75,21 @@ WSGI_APPLICATION = 'ProyectoAPI.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-
-DATABASES = {
-            'default': {
-                'ENGINE': 'django.db.backends.postgresql_psycopg2',
-                'HOST': os.getenv('DATABASE_HOST'),
-                'PORT': os.getenv('DATABASE_PORT'),
-                'USER': os.getenv('DATABASE_USER'),
-                'PASSWORD': os.getenv('DATABASE_PSW'),
-                'NAME': os.getenv('DATABASE_NAME')
+if os.getenv('DEBUG_MODE') == 'True':
+    DATABASES = {
+                'default': {
+                    'ENGINE': 'django.db.backends.postgresql_psycopg2',
+                    'HOST': os.getenv('DATABASE_HOST'),
+                    'PORT': os.getenv('DATABASE_PORT'),
+                    'USER': os.getenv('DATABASE_USER'),
+                    'PASSWORD': os.getenv('DATABASE_PSW'),
+                    'NAME': os.getenv('DATABASE_NAME')
+                    }
                 }
-            }
-
-# DATABASES = {'default': dj_database_url.config(default=os.environ['DB_URL'], engine='django_cockroachdb')}
-    
+else:
+    DATABASES = {
+        "default": dj_database_url.config(default=os.environ['DATABASE_URL'], conn_max_age=1800),
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
