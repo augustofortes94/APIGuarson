@@ -192,15 +192,18 @@ class ModeLobbyView(ListView):
     def modeAdd(request):
         try:
             Lobby.objects.get(mode=request.POST['mode'])
-            Lobby.objects.get(name=request.POST['name'])
-            messages.warning(request, 'El modo o nombre ya existen')
+            messages.warning(request, 'El modo ya existen')
         except:
-            Lobby.objects.create(
-                mode=request.POST['mode'],
-                name=request.POST['name'],
-                map=request.POST['map']
-            )
-            messages.success(request, request.POST['name'] + ' ha sido creado')
+            try:
+                Lobby.objects.get(name=request.POST['name'])
+                messages.warning(request, 'El nombre ya existen')
+            except:
+                Lobby.objects.create(
+                    mode=request.POST['mode'],
+                    name=request.POST['name'],
+                    map=request.POST['map']
+                )
+                messages.success(request, request.POST['name'] + ' ha sido creado')
         return redirect('/mode/list')
 
     @login_required
