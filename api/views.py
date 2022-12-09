@@ -303,7 +303,7 @@ class WeaponView(ListView):
         return redirect('/weapon/list')
 
     def weaponDetail(request, command):
-        command = Command.objects.filter(name__icontains=command)[0]
+        command = Command.objects.filter(name=command)[0]
         weapon = Weapon.objects.filter(command=command).first()
         return render(request, 'crud_weapons/weapon_detail.html', {"weapon": weapon})
 
