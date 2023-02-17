@@ -9,7 +9,7 @@ class Command(models.Model):
     parameter2 = models.CharField(max_length=50, null=True, blank=True, default=None)
 
 
-class Weapon(models.Model):
+class Weapon_w1(models.Model):
     command = models.ForeignKey(Command, on_delete=models.CASCADE, related_name="commands")
     category = models.CharField(max_length=50)
     name = models.CharField(max_length=50, unique=True)

@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'api',
     'user',
+    'website',
     'crispy_forms',
     'rest_framework',
     'oauth2_provider',
@@ -75,8 +76,8 @@ WSGI_APPLICATION = 'ProyectoAPI.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-if os.getenv('DEBUG_MODE') == 'True':
-    DATABASES = {
+#if os.getenv('DEBUG_MODE') == 'True':
+DATABASES = {
                 'default': {
                     'ENGINE': 'django.db.backends.postgresql_psycopg2',
                     'HOST': os.getenv('DATABASE_HOST'),
@@ -86,10 +87,12 @@ if os.getenv('DEBUG_MODE') == 'True':
                     'NAME': os.getenv('DATABASE_NAME')
                     }
                 }
+"""
 else:
     DATABASES = {
         "default": dj_database_url.config(default=os.environ['DATABASE_URL'], conn_max_age=1800),
     }
+"""
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
