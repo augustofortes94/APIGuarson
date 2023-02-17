@@ -2,6 +2,7 @@
 
 {% block title %} Guarson App {% endblock %}
 
+{% block navbar %} <a class="nav-item nav-link" href="/w1/weapon/list"><i class="fa-solid fa-gun"></i></a>  <!-- Weapon list --> {% endblock %}
 
 {% block body %}
     <h4 class="text-center">Weapons</h4>
@@ -20,13 +21,13 @@
                 {% for weapon in page_obj %}
                 <tr>
                     <td class="text-center">{{ weapon.name }}</td>
-                    <td class="text-center"><a class="btn btn-link" href="/weapon/{{ weapon.command.name }}">/{{ weapon.command.name }}</a></td>
+                    <td class="text-center"><a class="btn btn-link" href="/w1/weapon/{{ weapon.command.name }}">/{{ weapon.command.name }}</a></td>
                     <td class="text-center">{{ weapon.category }}</td>
                     {% if request.user.is_staff %}
                         <td class="text-center">
-                            <a class="btn" href="/weapon/edit/{{ weapon.command.name }}"><i class="fa-regular fa-pen-to-square"></i></a>    <!-- Edit -->
+                            <a class="btn" href="/w1/weapon/edit/{{ weapon.command.name }}"><i class="fa-regular fa-pen-to-square"></i></a>    <!-- Edit -->
                             {% if request.user.is_superuser %}
-                                <a class="btn ms-3" href="/weapon/delete/{{ weapon.id }}"><i class="fa-regular fa-trash-can"></i></a>   <!-- Delete -->
+                                <a class="btn ms-3" href="/w1/weapon/delete/{{ weapon.id }}"><i class="fa-regular fa-trash-can"></i></a>   <!-- Delete -->
                             {% endif %}
                         </td>
                     {% endif %}
@@ -53,7 +54,7 @@
         </div>
         {% if request.user.is_staff %}
             <div class="d-grid gap-2 col-1 mx-auto">
-                <a class="btn btn-warning" href="/weapon/addform">Add</a>
+                <a class="btn btn-warning" href="/w1/weapon/addform">Add</a>
             </div>
         {% endif %}
     </div>

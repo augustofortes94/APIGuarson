@@ -1,10 +1,11 @@
-from .views import CommandView, ModeLobbyView, WeaponView
+from .views import CommandView, HomeView, ModeLobbyView, WeaponView
 from django.urls import path
 
 app_name = 'api'
 
 urlpatterns = [
-    path('', WeaponView.weaponList, name='weapons_list'),
+    path('', HomeView.home_view, name='home_view'),
+    path('home/', HomeView.home_view, name='home_view'),
 
     # COMMANDS
     path('command/list/', CommandView.commandList, name='commands_list'),
@@ -21,11 +22,12 @@ urlpatterns = [
     path('mode/delete/<int:id>', ModeLobbyView.modeDelete, name='mode_delete_by_id'),
 
     # WEAPONS
-    path('weapon/list', WeaponView.weaponList, name='weapons_list'),
-    path('weapon/add', WeaponView.weaponAdd, name='weapon_add'),
-    path('weapon/addform', WeaponView.weaponAddForm, name='weapon_addform'),
-    path('weapon/delete/<int:id>', WeaponView.weaponDelete, name='weapon_delete_by_id'),
-    path('weapon/edition/<int:id>', WeaponView.weaponEdition, name='weapon_editition'),
-    path('weapon/edit/<str:command>', WeaponView.weaponEdit, name='weapon_edit'),
-    path('weapon/<str:command>', WeaponView.weaponDetail, name='weapon_by_command'),
+    path('w1/', WeaponView.weaponList, name='weapons_list'),
+    path('w1/weapon/list', WeaponView.weaponList, name='weapons_list'),
+    path('w1/weapon/add', WeaponView.weaponAdd, name='weapon_add'),
+    path('w1/weapon/addform', WeaponView.weaponAddForm, name='weapon_addform'),
+    path('w1/weapon/delete/<int:id>', WeaponView.weaponDelete, name='weapon_delete_by_id'),
+    path('w1/weapon/edition/<int:id>', WeaponView.weaponEdition, name='weapon_editition'),
+    path('w1/weapon/edit/<str:command>', WeaponView.weaponEdit, name='weapon_edit'),
+    path('w1/weapon/<str:command>', WeaponView.weaponDetail, name='weapon_by_command'),
 ]

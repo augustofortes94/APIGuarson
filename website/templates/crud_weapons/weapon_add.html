@@ -2,13 +2,15 @@
 
 {% block title %} Add Weapon {% endblock %}
 
+{% block navbar %} <a class="nav-item nav-link" href="/w1/weapon/list"><i class="fa-solid fa-gun"></i></a>  <!-- Weapon list --> {% endblock %}
+
 {% block body %}
     <div class="row">
         <div class="d-flex justify-content-center">
             <div class="card w-100">
                 <h3 class="text-center pt-1">Agregar Arma</h2>
                 <div class="card-body">
-                    <form id="add-weapon" action="/weapon/add" method="POST" name="add-weapon-form">{% csrf_token %}
+                    <form id="add-weapon" action="/w1/weapon/add" method="POST" name="add-weapon-form">{% csrf_token %}
                         <div class="input-group pt-2">
                             <span class="input-group-text" id="basic-addon3">Name</span>
                             <input type="text" class="form-control" id="add-name" name="name" required>

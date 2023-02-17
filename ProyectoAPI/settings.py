@@ -20,8 +20,8 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = os.getenv('DEBUG_MODE')
 ALLOWED_HOSTS = [os.getenv('ALLOWED_HOSTS')]
 
-LOGIN_REDIRECT_URL = '/weapon/list'
-LOGOUT_REDIRECT_URL = '/weapon/list'
+LOGIN_REDIRECT_URL = '/home'
+LOGOUT_REDIRECT_URL = '/home'
 
 CSRF_TRUSTED_ORIGINS = ["https://apiguarson.herokuapp.com"]
 

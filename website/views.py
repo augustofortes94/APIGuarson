@@ -85,6 +85,11 @@ class CommandView(ListView):
         return redirect('/command/list')
 
 
+class HomeView(ListView):
+    def home_view(request):
+        return render(request, 'home/home.html')
+
+
 class ModeLobbyView(ListView):
     @login_required
     @user_passes_test(lambda u: u.is_superuser)
