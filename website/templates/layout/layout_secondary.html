@@ -1,11 +1,8 @@
 {% extends "./layout_main.html" %}
 
-{% block buttons %}
+{% block navbar %}
     <li class="nav-item">
-        <a class="nav-item nav-link" href="/home"><i class="fa-solid fa-house"></i></a>  <!-- Home -->
-    </li>
-    <li class="nav-item">
-        {% block navbar %} {% endblock %}
+        {% block buttons %} {% endblock %}
     </li>
     {% if request.user.is_superuser or request.user.is_staff %}
         {% if request.user.is_superuser %}
@@ -21,9 +18,6 @@
         </li>
     {% endif %}
     <li class="nav-item d-flex justify-content-start w-75">
-        <form class="d-flex justify-content w-50" action="/weapon/list" method="POST">{% csrf_token %}  <!-- Search bar -->
-            <input class="form-control mr-sm-2" name="searched" type="text" placeholder="Search" aria-label="Search" style="display: inline;">
-            <button type="submit" class="btn btn-secondary" style="display: inline;"><i class="fas fa-search"></i></button>
-        </form>
+        {% block searchbar %} {% endblock %}
     </li>
 {% endblock %}

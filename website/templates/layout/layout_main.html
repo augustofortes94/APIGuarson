@@ -27,22 +27,23 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0 w-100">
-                        {% block buttons %}
-
-                        {% endblock %}
-                        {% if request.user.is_authenticated %}
-                            <li class="nav-item d-flex justify-content-end w-25">
-                                <a class="nav-item nav-link">{{ request.user }}</a> <!-- Username -->
-                                <a class="nav-item nav-link" href="/user/accounts/logout" title="Logout"><i class="fa-solid fa-right-from-bracket"></i></a>  <!-- Logout -->
-                            </li>
-                        {% else %}
-                            <li class="nav-item d-flex justify-content-end w-25">
-                                <a class="nav-item nav-link" href="/user/accounts/login" title="Login">Login</a> <!-- Login -->
-                                <a class="nav-item nav-link" href="/user/register" title="Register">Register</a> <!-- Register -->
-                            </li>
-                        {% endif %}
+                        <li class="nav-item">
+                            <a class="nav-item nav-link" href="/home"><i class="fa-solid fa-house"></i></a>  <!-- Home -->
+                        </li>
+                        {% block navbar %} {% endblock %}
                     </ul>
                 </div>
+                {% if request.user.is_authenticated %}
+                    <li class="nav-item d-flex justify-content-end w-25">
+                        <a class="nav-item nav-link">{{ request.user }}</a> <!-- Username -->
+                        <a class="nav-item nav-link" href="/user/accounts/logout" title="Logout"><i class="fa-solid fa-right-from-bracket"></i></a>  <!-- Logout -->
+                    </li>
+                {% else %}
+                    <li class="nav-item d-flex justify-content-end w-25">
+                        <a class="nav-item nav-link" href="/user/accounts/login" title="Login">Login</a> <!-- Login -->
+                        <a class="nav-item nav-link" href="/user/register" title="Register">Register</a> <!-- Register -->
+                    </li>
+                {% endif %}
             </div>
         </nav>
     </header>
