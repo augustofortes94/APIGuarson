@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 
 class Command(models.Model):
@@ -7,6 +8,12 @@ class Command(models.Model):
     text = models.CharField(max_length=500, null=True, blank=True, default=None)
     parameter1 = models.CharField(max_length=50, null=True, blank=True, default=None)
     parameter2 = models.CharField(max_length=50, null=True, blank=True, default=None)
+    warzone_version = models.CharField(max_length=2, null=True, blank=True, default=None)
+    updated_on = models.DateTimeField(null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        self.updated_on = timezone.now()
+        return super(Command, self).save(*args, **kwargs)
 
 
 class Weapon_w1(models.Model):
@@ -26,9 +33,19 @@ class Weapon_w1(models.Model):
     perk2 = models.CharField(max_length=100, null=True, blank=True, default=None)
     alternative = models.CharField(max_length=512, null=True, blank=True, default=None)
     alternative2 = models.CharField(max_length=512, null=True, blank=True, default=None)
+    updated_on = models.DateTimeField(null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        self.updated_on = timezone.now()
+        return super(Weapon_w1, self).save(*args, **kwargs)
 
 
 class Lobby(models.Model):
     mode = models.CharField(max_length=50, unique=True)
     name = models.CharField(max_length=50, unique=True)
     map = models.CharField(max_length=50, null=True, blank=True, default=None)
+    updated_on = models.DateTimeField(null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        self.updated_on = timezone.now()
+        return super(Lobby, self).save(*args, **kwargs)

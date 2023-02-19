@@ -1,6 +1,7 @@
 import json
-from .serializers import CommandSerializer, LobbySerializer, WeaponSerializer
+from .serializers import CommandSerializer, LobbySerializer, WeaponW1Serializer
 from .models import Command, Lobby, Weapon_w1
+from django.db.models import Q
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from oauth2_provider.contrib.rest_framework import TokenHasReadWriteScope
@@ -19,16 +20,18 @@ class CommandApi(APIView):
 
     def get(self, request, *args, **kwargs):
         try:    # get by command
-            command = Command.objects.filter(name__istartswith=request.GET.get('command')).values()[0]
-            serializer = CommandSerializer(command)
-            return Response({'message': "Success", 'command': serializer.data}, status=status.HTTP_202_ACCEPTED)
+            command = Command.objects.filter(Q(name__istartswith=request.GET.get('command'))).values()[0]
+            if command['warzone_version'] == request.GET.get('warzone_version') or command['warzone_version'] is None:
+                serializer = CommandSerializer(command)
+                return Response({'message': "Success", 'command': serializer.data}, status=status.HTTP_202_ACCEPTED)
+            else:
+                return Response(status=status.HTTP_400_BAD_REQUEST)
         except:
-            try:
+            try:    # get all commands by category
                 data = {}
-                categories = Command.objects.order_by('category').values('category').distinct()  # get the different categories
-                
+                categories = Command.objects.filter(Q(warzone_version=request.GET.get('warzone_version')) | Q(warzone_version=None)).order_by('category').values('category').distinct()  # get the different categories
                 for category in categories:
-                    commands = Command.objects.filter(category=category['category']).order_by('name')
+                    commands = Command.objects.filter(Q(category=category['category']) & (Q(warzone_version=request.GET.get('warzone_version')) | Q(warzone_version=None))).order_by('name')
                     serializer = CommandSerializer(commands, many=True)
                     data[category['category']] = serializer.data
                 return Response({'message': "Success", 'categories': data}, status=status.HTTP_202_ACCEPTED)
@@ -45,7 +48,8 @@ class CommandApi(APIView):
                                 category=command['category'],
                                 text=command['text'],
                                 parameter1=command['parameter1'],
-                                parameter2=command['parameter2']
+                                parameter2=command['parameter2'],
+                                warzone_version=command['warzone_version']
                             )
                 success[command['name']] = 'Added'
             except:
@@ -89,7 +93,7 @@ class ModeLobbyApi(viewsets.ModelViewSet):
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
-class WeaponApi(APIView):
+class WeaponW1Api(APIView):
     permission_classes = [IsAuthenticated, TokenHasReadWriteScope]
     
     @method_decorator(csrf_exempt)
@@ -105,7 +109,7 @@ class WeaponApi(APIView):
                 weapons = Weapon_w1.objects.select_related().filter(command=command)
             else:           # GET ALL
                 weapons = Weapon_w1.objects.all()
-            serializer = WeaponSerializer(weapons, many=True)
+            serializer = WeaponW1Serializer(weapons, many=True)
             return Response({'message': "Success", 'weapons': serializer.data}, status=status.HTTP_202_ACCEPTED)
         except:
             return Response({'message': "Error: weapon not found..."}, status=status.HTTP_404_NOT_FOUND)
@@ -117,7 +121,8 @@ class WeaponApi(APIView):
             try:
                 command = Command.objects.create(
                                 name=weapons['command'],
-                                category=weapons['category']
+                                category=weapons['category'],
+                                warzone_version='w1'
                             )
                 Weapon_w1.objects.create(
                     command=command,
@@ -162,7 +167,7 @@ class WeaponApi(APIView):
         weapon.alternative = data['alternative']
         weapon.alternative2 = data['alternative2']
         weapon.save()
-        serializer = WeaponSerializer(data=weapon)
+        serializer = WeaponW1Serializer(data=weapon)
         serializer.is_valid(raise_exception=True)
         return Response({'message': "Success", 'weapons': serializer.data}, status=status.HTTP_202_ACCEPTED)
 
@@ -174,5 +179,5 @@ class WeaponApi(APIView):
         
         Weapon_w1.objects.filter(id=id).delete()
         Command.objects.filter(id=weapon.command.id).delete()
-        serializer = WeaponSerializer(weapon)
+        serializer = WeaponW1Serializer(weapon)
         return Response({'message': "Success", 'weapons': serializer.data}, status=status.HTTP_202_ACCEPTED)
