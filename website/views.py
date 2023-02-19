@@ -1,5 +1,5 @@
 import json
-from api.models import Command, Lobby, Weapon_w1
+from api.models import Command, Lobby, WeaponW1
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.paginator import Paginator
@@ -141,7 +141,7 @@ class WeaponView(ListView):
                     name=data['command'],
                     category=data['category']
                     )
-        Weapon_w1.objects.create(
+        WeaponW1.objects.create(
             command=command,
             category=data['category'],
             name=data['name'],
@@ -163,7 +163,7 @@ class WeaponView(ListView):
     @login_required
     @user_passes_test(lambda u: u.is_staff)
     def edit(request, data, id):
-        weapon = Weapon_w1.objects.get(id=id)
+        weapon = WeaponW1.objects.get(id=id)
         command = Command.objects.get(id=weapon.command.id)
         command.name = data['command']
         command.category = data['category']
@@ -190,7 +190,7 @@ class WeaponView(ListView):
     @user_passes_test(lambda u: u.is_staff)
     def weaponAdd(request):
         try:
-            Weapon_w1.objects.get(command__name=request.POST['command'])
+            WeaponW1.objects.get(command__name=request.POST['command'])
             messages.warning(request, request.POST['command'] + ' ya existe')
         except:
             data = {}
@@ -214,22 +214,22 @@ class WeaponView(ListView):
     @login_required
     @user_passes_test(lambda u: u.is_superuser)
     def weaponDelete(request, id):
-        weapon = Weapon_w1.objects.get(id=id)
-        Weapon_w1.objects.filter(id=id).delete()
+        weapon = WeaponW1.objects.get(id=id)
+        WeaponW1.objects.filter(id=id).delete()
         Command.objects.filter(id=weapon.command.id).delete()
         messages.success(request,  weapon.name + ' ha sido eliminada')
         return redirect('/weapon/list')
 
     def weaponDetail(request, command):
         command = Command.objects.filter(name=command)[0]
-        weapon = Weapon_w1.objects.filter(command=command).first()
+        weapon = WeaponW1.objects.filter(command=command).first()
         return render(request, 'crud_weapons/weapon_detail.html', {"weapon": weapon})
 
     @login_required
     @user_passes_test(lambda u: u.is_staff)
     def weaponEdit(request, command):
         command = Command.objects.filter(name__icontains=command)[0]
-        weapon = Weapon_w1.objects.filter(command=command).first()
+        weapon = WeaponW1.objects.filter(command=command).first()
         return render(request, 'crud_weapons/weapon_edit.html', {"weapon": weapon})
 
     @login_required
@@ -250,9 +250,9 @@ class WeaponView(ListView):
 
     def weaponList(request):
         if request.method == "POST":
-            weapons = Weapon_w1.objects.filter(name__icontains=request.POST['searched']).order_by('command__name')
+            weapons = WeaponW1.objects.filter(name__icontains=request.POST['searched']).order_by('command__name')
         else:
-            weapons = Weapon_w1.objects.all().order_by('command__name')
+            weapons = WeaponW1.objects.all().order_by('command__name')
 
         paginator = Paginator(weapons, 12)
         page_number = request.GET.get('page')

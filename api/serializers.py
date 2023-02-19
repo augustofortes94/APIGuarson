@@ -1,4 +1,4 @@
-from .models import Command, Lobby, Weapon_w1
+from .models import Command, Lobby, WeaponW1
 from rest_framework import serializers
 
 
@@ -27,5 +27,5 @@ class WeaponW1Serializer(serializers.ModelSerializer):
     warzone = serializers.CharField(source='command.warzone_version', read_only=True)
 
     class Meta:
-        model = Weapon_w1
+        model = WeaponW1
         fields = ['id', 'warzone', 'name', 'command', 'category', 'muzzle', 'barrel', 'laser', 'optic', 'stock', 'underbarrel', 'magazine', 'ammunition', 'reargrip', 'perk', 'perk2', 'alternative', 'alternative2']

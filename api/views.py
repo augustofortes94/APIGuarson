@@ -1,6 +1,6 @@
 import json
 from .serializers import CommandSerializer, LobbySerializer, WeaponW1Serializer
-from .models import Command, Lobby, Weapon_w1
+from .models import Command, Lobby, WeaponW1, WeaponW2
 from django.db.models import Q
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
@@ -19,7 +19,7 @@ class CommandApi(APIView):
         return super().dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
-        try:    # get by command
+        try:    # Get by command
             command = Command.objects.filter(Q(name__istartswith=request.GET.get('command'))).values()[0]
             if command['warzone_version'] == request.GET.get('warzone_version') or command['warzone_version'] is None:
                 serializer = CommandSerializer(command)
@@ -27,7 +27,7 @@ class CommandApi(APIView):
             else:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
         except:
-            try:    # get all commands by category
+            try:    # Get all commands by category
                 data = {}
                 categories = Command.objects.filter(Q(warzone_version=request.GET.get('warzone_version')) | Q(warzone_version=None)).order_by('category').values('category').distinct()  # get the different categories
                 for category in categories:
@@ -103,12 +103,12 @@ class WeaponW1Api(APIView):
     def get(self, request, *args, **kwargs):
         try:
             if request.GET.get('id'):
-                weapons = Weapon_w1.objects.get(id=request.GET.get('id'))
+                weapons = WeaponW1.objects.get(id=request.GET.get('id'))
             elif request.GET.get('command'):
                 command = Command.objects.filter(name__icontains=request.GET.get('command'))[0]
-                weapons = Weapon_w1.objects.select_related().filter(command=command)
-            else:           # GET ALL
-                weapons = Weapon_w1.objects.all()
+                weapons = WeaponW1.objects.select_related().filter(command=command)
+            else:   # Get all
+                weapons = WeaponW1.objects.all()
             serializer = WeaponW1Serializer(weapons, many=True)
             return Response({'message': "Success", 'weapons': serializer.data}, status=status.HTTP_202_ACCEPTED)
         except:
@@ -124,7 +124,7 @@ class WeaponW1Api(APIView):
                                 category=weapons['category'],
                                 warzone_version='w1'
                             )
-                Weapon_w1.objects.create(
+                WeaponW1.objects.create(
                     command=command,
                     category=weapons['category'],
                     name=weapons['name'],
@@ -150,7 +150,7 @@ class WeaponW1Api(APIView):
     def put(self, request, *args, **kwargs):
         data = json.loads(request.body)
         command = Command.objects.filter(name__icontains=data['command'])[0]
-        weapon = Weapon_w1.objects.select_related().get(command=command)
+        weapon = WeaponW1.objects.select_related().get(command=command)
         weapon.category = data['category']
         weapon.name = data['name']
         weapon.muzzle = data['muzzle']
@@ -173,11 +173,11 @@ class WeaponW1Api(APIView):
 
     def delete(self, request, id, *args, **kwargs):
         try:
-            weapon = Weapon_w1.objects.get(id=id)
+            weapon = WeaponW1.objects.get(id=id)
         except:
             return Response({'message': "Error: weapon not found..."}, status=status.HTTP_404_NOT_FOUND)
         
-        Weapon_w1.objects.filter(id=id).delete()
+        WeaponW1.objects.filter(id=id).delete()
         Command.objects.filter(id=weapon.command.id).delete()
         serializer = WeaponW1Serializer(weapon)
         return Response({'message': "Success", 'weapons': serializer.data}, status=status.HTTP_202_ACCEPTED)
