@@ -1,4 +1,4 @@
-from .views import CommandView, HomeView, ModeLobbyView, WeaponView
+from .views import CommandView, HomeView, ModeLobbyView, WeaponW1View, WeaponW2View
 from django.urls import path
 
 app_name = 'api'
@@ -22,12 +22,21 @@ urlpatterns = [
     path('mode/delete/<int:id>', ModeLobbyView.modeDelete, name='mode_delete_by_id'),
 
     # WEAPONS
-    path('w1/', WeaponView.weaponList, name='weapons_list'),
-    path('w1/weapon/list', WeaponView.weaponList, name='weapons_list'),
-    path('w1/weapon/add', WeaponView.weaponAdd, name='weapon_add'),
-    path('w1/weapon/addform', WeaponView.weaponAddForm, name='weapon_addform'),
-    path('w1/weapon/delete/<int:id>', WeaponView.weaponDelete, name='weapon_delete_by_id'),
-    path('w1/weapon/edition/<int:id>', WeaponView.weaponEdition, name='weapon_editition'),
-    path('w1/weapon/edit/<str:command>', WeaponView.weaponEdit, name='weapon_edit'),
-    path('w1/weapon/<str:command>', WeaponView.weaponDetail, name='weapon_by_command'),
+    path('w1/', WeaponW1View.weaponList, name='weapons_w1_list'),
+    path('w1/weapon/list', WeaponW1View.weaponList, name='weapons_w1_list'),
+    path('w1/weapon/add', WeaponW1View.weaponAdd, name='weapon_w1_add'),
+    path('w1/weapon/addform', WeaponW1View.weaponAddForm, name='weapon_w1_addform'),
+    path('w1/weapon/delete/<int:id>', WeaponW1View.weaponDelete, name='weapon_w1_delete_by_id'),
+    path('w1/weapon/edition/<int:id>', WeaponW1View.weaponEdition, name='weapon_w1_editition'),
+    path('w1/weapon/edit/<str:command>', WeaponW1View.weaponEdit, name='weapon_w1_edit'),
+    path('w1/weapon/<str:command>', WeaponW1View.weaponDetail, name='weapon_w1_by_command'),
+
+    path('w2/', WeaponW2View.weaponList, name='weapons_w2_list'),
+    path('w2/weapon/list', WeaponW2View.weaponList, name='weapons_w2_list'),
+    path('w2/weapon/add', WeaponW2View.weaponAdd, name='weapon_w2_add'),
+    path('w2/weapon/addform', WeaponW2View.weaponAddForm, name='weapon_w2_addform'),
+    path('w2/weapon/delete/<int:id>', WeaponW2View.weaponDelete, name='weapon_w2_delete_by_id'),
+    path('w2/weapon/edition/<int:id>', WeaponW2View.weaponEdition, name='weapon_w2_editition'),
+    path('w2/weapon/edit/<str:command>', WeaponW2View.weaponEdit, name='weapon_w2_edit'),
+    path('w2/weapon/<str:command>', WeaponW2View.weaponDetail, name='weapon_w2_by_command'),
 ]

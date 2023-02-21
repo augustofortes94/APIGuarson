@@ -1,12 +1,11 @@
 import json
-from api.models import Command, Lobby, WeaponW1
+from api.models import Command, Lobby, WeaponW1, WeaponW2
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.shortcuts import redirect, render
 from django.views.generic import ListView
-
 
 class CommandView(ListView):
     @login_required
@@ -133,7 +132,7 @@ class ModeLobbyView(ListView):
         return redirect('/mode/list')
 
 
-class WeaponView(ListView):
+class WeaponW1View(ListView):
     @login_required
     @user_passes_test(lambda u: u.is_staff)
     def add(request, data):
@@ -202,9 +201,136 @@ class WeaponView(ListView):
                 else:
                     data[key] = request.POST[key]
             data = json.loads(json.dumps(data))
-            WeaponView.add(request, data)
+            WeaponW1View.add(request, data)
             messages.success(request, data['name'] + ' ha sido creada')
-        return redirect('/weapon/list')
+        return redirect('/w1/weapon/list')
+
+    @login_required
+    @user_passes_test(lambda u: u.is_staff)
+    def weaponAddForm(request):
+        return render(request, 'crud_weapons/weapon_w1_add.html')
+
+    @login_required
+    @user_passes_test(lambda u: u.is_superuser)
+    def weaponDelete(request, id):
+        weapon = WeaponW1.objects.get(id=id)
+        WeaponW1.objects.filter(id=id).delete()
+        Command.objects.filter(id=weapon.command.id).delete()
+        messages.success(request,  weapon.name + ' ha sido eliminada')
+        return redirect('/w1/weapon/list')
+
+    def weaponDetail(request, command):
+        command = Command.objects.filter(name=command)[0]
+        weapon = WeaponW1.objects.filter(command=command).first()
+        return render(request, 'crud_weapons/weapon_w1_detail.html', {"weapon": weapon})
+
+    @login_required
+    @user_passes_test(lambda u: u.is_staff)
+    def weaponEdit(request, command):
+        command = Command.objects.filter(name__icontains=command)[0]
+        weapon = WeaponW1.objects.filter(command=command).first()
+        return render(request, 'crud_weapons/weapon_w1_edit.html', {"weapon": weapon})
+
+    @login_required
+    @user_passes_test(lambda u: u.is_staff)
+    def weaponEdition(request, id):
+        data = {}
+        for key in request.POST:
+            if key == 'csrfmiddlewaretoken':
+                pass
+            elif request.POST[key] == 'None' or request.POST[key] == "":
+                data[key] = None
+            else:
+                data[key] = request.POST[key]
+        data = json.loads(json.dumps(data))
+        WeaponW1View.edit(request, data, id)
+        messages.success(request, data['name'] + ' ha sido modificada')
+        return redirect('/w1/weapon/list')
+
+    def weaponList(request):
+        if request.method == "POST":
+            weapons = WeaponW1.objects.filter(name__icontains=request.POST['searched']).order_by('command__name')
+        else:
+            weapons = WeaponW1.objects.all().order_by('command__name')
+
+        paginator = Paginator(weapons, 12)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        return render(request, 'crud_weapons/weapons_list.html', {'page_obj': page_obj})
+
+
+class WeaponW2View(ListView):
+    @login_required
+    @user_passes_test(lambda u: u.is_staff)
+    def add(request, data):
+        command = Command.objects.create(
+                    name=data['command'],
+                    category=data['category']
+                    )
+        WeaponW2.objects.create(
+            command=command,
+            category=data['category'],
+            name=data['name'],
+            muzzle=data['muzzle'],
+            barrel=data['barrel'],
+            laser=data['laser'],
+            optic=data['optic'],
+            stock=data['stock'],
+            underbarrel=data['underbarrel'],
+            magazine=data['magazine'],
+            ammunition=data['ammunition'],
+            reargrip=data['reargrip'],
+            perk=data['perk'],
+            perk2=data['perk2'],
+            alternative=data['alternative'],
+            alternative2=data['alternative2']
+        )
+
+    @login_required
+    @user_passes_test(lambda u: u.is_staff)
+    def edit(request, data, id):
+        weapon = WeaponW2.objects.get(id=id)
+        command = Command.objects.get(id=weapon.command.id)
+        command.name = data['command']
+        command.category = data['category']
+
+        weapon.category = data['category']
+        weapon.name = data['name']
+        weapon.muzzle = data['muzzle']
+        weapon.barrel = data['barrel']
+        weapon.laser = data['laser']
+        weapon.optic = data['optic']
+        weapon.stock = data['stock']
+        weapon.underbarrel = data['underbarrel']
+        weapon.magazine = data['magazine']
+        weapon.ammunition = data['ammunition']
+        weapon.reargrip = data['reargrip']
+        weapon.perk = data['perk']
+        weapon.perk2 = data['perk2']
+        weapon.alternative = data['alternative']
+        weapon.alternative2 = data['alternative2']
+        weapon.save()
+        command.save()
+
+    @login_required
+    @user_passes_test(lambda u: u.is_staff)
+    def weaponAdd(request):
+        try:
+            WeaponW2.objects.get(command__name=request.POST['command'])
+            messages.warning(request, request.POST['command'] + ' ya existe')
+        except:
+            data = {}
+            for key in request.POST:
+                if key == 'csrfmiddlewaretoken':
+                    pass
+                elif request.POST[key] == 'None' or request.POST[key] == "":
+                    data[key] = None
+                else:
+                    data[key] = request.POST[key]
+            data = json.loads(json.dumps(data))
+            WeaponW2View.add(request, data)
+            messages.success(request, data['name'] + ' ha sido creada')
+        return redirect('/w1/weapon/list')
 
     @login_required
     @user_passes_test(lambda u: u.is_staff)
@@ -214,22 +340,22 @@ class WeaponView(ListView):
     @login_required
     @user_passes_test(lambda u: u.is_superuser)
     def weaponDelete(request, id):
-        weapon = WeaponW1.objects.get(id=id)
-        WeaponW1.objects.filter(id=id).delete()
+        weapon = WeaponW2.objects.get(id=id)
+        WeaponW2.objects.filter(id=id).delete()
         Command.objects.filter(id=weapon.command.id).delete()
         messages.success(request,  weapon.name + ' ha sido eliminada')
-        return redirect('/weapon/list')
+        return redirect('/w1/weapon/list')
 
     def weaponDetail(request, command):
         command = Command.objects.filter(name=command)[0]
-        weapon = WeaponW1.objects.filter(command=command).first()
+        weapon = WeaponW2.objects.filter(command=command).first()
         return render(request, 'crud_weapons/weapon_detail.html', {"weapon": weapon})
 
     @login_required
     @user_passes_test(lambda u: u.is_staff)
     def weaponEdit(request, command):
         command = Command.objects.filter(name__icontains=command)[0]
-        weapon = WeaponW1.objects.filter(command=command).first()
+        weapon = WeaponW2.objects.filter(command=command).first()
         return render(request, 'crud_weapons/weapon_edit.html', {"weapon": weapon})
 
     @login_required
@@ -244,15 +370,15 @@ class WeaponView(ListView):
             else:
                 data[key] = request.POST[key]
         data = json.loads(json.dumps(data))
-        WeaponView.edit(request, data, id)
+        WeaponW2View.edit(request, data, id)
         messages.success(request, data['name'] + ' ha sido modificada')
-        return redirect('/weapon/list')
+        return redirect('/w1/weapon/list')
 
     def weaponList(request):
         if request.method == "POST":
-            weapons = WeaponW1.objects.filter(name__icontains=request.POST['searched']).order_by('command__name')
+            weapons = WeaponW2.objects.filter(name__icontains=request.POST['searched']).order_by('command__name')
         else:
-            weapons = WeaponW1.objects.all().order_by('command__name')
+            weapons = WeaponW2.objects.all().order_by('command__name')
 
         paginator = Paginator(weapons, 12)
         page_number = request.GET.get('page')
