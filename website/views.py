@@ -42,7 +42,8 @@ class CommandView(ListView):
                 category=data['category'],
                 text=data['text'],
                 parameter1=data['parameter1'],
-                parameter2=data['parameter2']
+                parameter2=data['parameter2'],
+                warzone_version=data['warzone_version']
             )
             messages.success(request, data['name'] + ' ha sido creado')
         return redirect('/command/list')
@@ -59,7 +60,15 @@ class CommandView(ListView):
     @user_passes_test(lambda u: u.is_superuser)
     def commandEdit(request, id):
         command = Command.objects.get(id=id)
-        return render(request, 'crud_commands/commands_edit.html', {"command": command})
+        version = {}    # Se agrego esta variable ya que el html no mostraba correctamente la opcion guardada con anterioridad
+        version['value'] = command.warzone_version
+        if command.warzone_version is None:
+            version['name'] = 'Ambos'
+        elif command.warzone_version is 'w1':
+            version['name'] = 'Guarson 1'
+        else:
+            version['name'] = 'Guarson 2'
+        return render(request, 'crud_commands/commands_edit.html', {"command": command, "version": version})
 
     @login_required
     @user_passes_test(lambda u: u.is_superuser)
@@ -79,6 +88,7 @@ class CommandView(ListView):
         command.text = data['text']
         command.parameter1 = data['parameter1']
         command.parameter2 = data['parameter2']
+        command.warzone_version = data['warzone_version']
         command.save()
         messages.success(request, data['name'] + ' ha sido modificado')
         return redirect('/command/list')
