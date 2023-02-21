@@ -1,10 +1,23 @@
 {% extends "../layout/layout_secondary.html" %}
 
-{% block buttons %} <a class="nav-item nav-link" href="/w1/weapon/list"><i class="fa-solid fa-gun"></i></a>  <!-- Weapon list --> {% endblock %}
+{% block buttons %}
+    {% if 'w1' in request.path %}
+        <a class="nav-item nav-link" href="/w1/weapon/list"><i class="fa-solid fa-gun"></i></a>  <!-- Weapon list -->
+    {% elif 'w2' in request.path %}
+        <a class="nav-item nav-link" href="/w2/weapon/list"><i class="fa-solid fa-gun"></i></a>  <!-- Weapon list -->
+    {% endif %}
+{% endblock %}
 
 {% block searchbar %}
-    <form class="d-flex justify-content w-50" action="/weapon/list" method="POST">{% csrf_token %}  <!-- Search bar -->
-        <input class="form-control mr-sm-2" name="searched" type="text" placeholder="Search" aria-label="Search" style="display: inline;">
-        <button type="submit" class="btn btn-secondary" style="display: inline;"><i class="fas fa-search"></i></button>
-    </form>
+    {% if 'w1' in request.path %}
+        <form class="d-flex justify-content w-50" action="/w1/weapon/list" method="POST">{% csrf_token %}  <!-- Search bar -->
+            <input class="form-control mr-sm-2" name="searched" type="text" placeholder="Search" aria-label="Search" style="display: inline;">
+            <button type="submit" class="btn btn-secondary" style="display: inline;"><i class="fas fa-search"></i></button>
+        </form>
+    {% elif 'w2' in request.path %}
+        <form class="d-flex justify-content w-50" action="/w2/weapon/list" method="POST">{% csrf_token %}  <!-- Search bar -->
+            <input class="form-control mr-sm-2" name="searched" type="text" placeholder="Search" aria-label="Search" style="display: inline;">
+            <button type="submit" class="btn btn-secondary" style="display: inline;"><i class="fas fa-search"></i></button>
+        </form>
+    {% endif %}
 {% endblock %}

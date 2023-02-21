@@ -1,0 +1,113 @@
+{% extends "../layout/layout_weapon.html" %}
+
+{% block title %} Guarson App - {{ weapon.name }} {% endblock %}
+
+{% block body %}
+    <div class="d-flex justify-content-center py-2">
+        <table class="table table-striped">
+            <tr class="table-info">
+                <th class="text-center" colspan="2">{{ weapon.name }}</th>
+            </tr>
+            <tr>
+                <td class="text-center">Comando</td>
+                <td class="text-center">/{{ weapon.command.name }}</td>
+            </tr>
+            <tr>
+                <td class="text-center">Categoria</td>
+                <td class="text-center">{{ weapon.category }}</td>
+            </tr>
+            {% if weapon.muzzle != None %}
+            <tr>
+                <td class="text-center">Muzzle</td>
+                <td class="text-center">{{ weapon.muzzle }}</td>
+            </tr>
+            {% endif %}
+            {% if weapon.barrel != None %}
+            <tr>
+                <td class="text-center">Barrel</td>
+                <td class="text-center">{{ weapon.barrel }}</td>
+            </tr>
+            {% endif %}
+            {% if weapon.laser != None %}
+            <tr>
+                <td class="text-center">Laser</td>
+                <td class="text-center">{{ weapon.laser }}</td>
+            </tr>
+            {% endif %}
+            {% if weapon.optic != None %}
+            <tr>
+                <td class="text-center">Optic</td>
+                <td class="text-center">{{ weapon.optic }}</td>
+            </tr>
+            {% endif %}
+            {% if weapon.stock != None %}
+            <tr>
+                <td class="text-center">Stock</td>
+                <td class="text-center">{{ weapon.stock }}</td>
+            </tr>
+            {% endif %}
+            {% if weapon.underbarrel != None %}
+            <tr>
+                <td class="text-center">Underbarrel</td>
+                <td class="text-center">{{ weapon.underbarrel }}</td>
+            </tr>
+            {% endif %}
+            {% if weapon.magazine != None %}
+            <tr>
+                <td class="text-center">Magazine</td>
+                <td class="text-center">{{ weapon.magazine }}</td>
+            </tr>
+            {% endif %}
+            {% if weapon.ammunition != None %}
+            <tr>
+                <td class="text-center">Ammunition</td>
+                <td class="text-center">{{ weapon.ammunition }}</td>
+            </tr>
+            {% endif %}
+            {% if weapon.reargrip != None %}
+            <tr>
+                <td class="text-center">Reargrip</td>
+                <td class="text-center">{{ weapon.reargrip }}</td>
+            </tr>
+            {% endif %}
+            {% if weapon.guard != None %}
+            <tr>
+                <td class="text-center">Guard</td>
+                <td class="text-center">{{ weapon.guard }}</td>
+            </tr>
+            {% endif %}
+            {% if weapon.comb != None %}
+            <tr>
+                <td class="text-center">Comb</td>
+                <td class="text-center">{{ weapon.comb }}</td>
+            </tr>
+            {% endif %}
+            {% if weapon.receiver != None %}
+            <tr>
+                <td class="text-center">Receiver</td>
+                <td class="text-center">{{ weapon.receiver }}</td>
+            </tr>
+            {% endif %}
+            {% if weapon.alternative != None %}
+            <tr>
+                <td class="text-center">Alternative</td>
+                <td class="text-center">{{ weapon.alternative }}</td>
+            </tr>
+            {% endif %}
+            {% if weapon.alternative2 != None %}
+            <tr>
+                <td class="text-center">Alternative 2</td>
+                <td class="text-center">{{ weapon.alternative2 }}</td>
+            </tr>
+            {% endif %}
+        </table>
+    </div>
+    {% if request.user.is_staff %}
+        <div class="d-flex justify-content-center mb-3">
+            <a class="btn me-5" href="/w2/weapon/edit/{{ weapon.command.name }}"><i class="fa-regular fa-pen-to-square"></i></a>
+            {% if request.user.is_superuser %}
+                <a class="btn ms-5" href="/w2/weapon/delete/{{ weapon.id }}"><i class="fa-regular fa-trash-can"></i></a>
+            {% endif %}
+        </div>
+    {% endif %}
+{% endblock %}

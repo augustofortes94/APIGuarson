@@ -1,0 +1,98 @@
+{% extends "../layout/layout_weapon.html" %}
+
+{% block title %} Guarson App - Add Weapon {% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="d-flex justify-content-center">
+            <div class="card w-100">
+                <h3 class="text-center pt-1">Agregar Arma</h2>
+                <div class="card-body">
+                    <form id="add-weapon" action="/w2/weapon/add" method="POST" name="add-weapon-form">{% csrf_token %}
+                        <div class="input-group pt-2">
+                            <span class="input-group-text" id="basic-addon3">Name</span>
+                            <input type="text" class="form-control" id="add-name" name="name" required>
+                        </div>
+                        <div class="input-group pt-2">
+                            <span class="input-group-text" id="basic-addon3">Command /</span>
+                            <input type="text" class="form-control" id="add-command" name="command" required>
+                        </div>
+                        <div class="input-group pt-2">
+                            <label class="input-group-text" for="inputGroupSelect01">Category</label>
+                            <select class="form-select" id="add-category" name="category" required>
+                                <option selected></option>
+                                <option value="Ametralladoras Ligeras">Ametralladoras Ligeras</option>
+                                <option value="Escopetas">Escopetas</option>
+                                <option value="Fusiles de Asalto">Fusiles de Asalto</option>
+                                <option value="Fusiles de Combate">Fusiles de Combate</option>
+                                <option value="Fusiles de Precision">Fusiles de Precision</option>
+                                <option value="Fusiles Tacticos">Fusiles Tacticos</option>
+                                <option value="Pistolas">Pistolas</option>
+                                <option value="Subfusiles">Subfusiles</option>
+                            </select>
+                        </div>
+                        <div class="input-group pt-2">
+                            <span class="input-group-text" id="basic-addon3">Muzzle</span>
+                            <input type="text" class="form-control" id="add-Muzzle" name="muzzle">
+                        </div>
+                        <div class="input-group pt-2">
+                            <span class="input-group-text" id="basic-addon3">Barrel</span>
+                            <input type="text" class="form-control" id="add-Barrel" name="barrel">
+                        </div>
+                        <div class="input-group pt-2">
+                            <span class="input-group-text" id="basic-addon3">Laser</span>
+                            <input type="text" class="form-control" id="add-laser" name="laser">
+                        </div>
+                        <div class="input-group pt-2">
+                            <span class="input-group-text" id="basic-addon3">Optic</span>
+                            <input type="text" class="form-control" id="add-optic" name="optic">
+                        </div>
+                        <div class="input-group pt-2">
+                            <span class="input-group-text" id="basic-addon3">Stock</span>
+                            <input type="text" class="form-control" id="add-stock" name="stock">
+                        </div>
+                        <div class="input-group pt-2">
+                            <span class="input-group-text" id="basic-addon3">Underbarrel</span>
+                            <input type="text" class="form-control" id="add-underbarrel" name="underbarrel">
+                        </div>
+                        <div class="input-group pt-2">
+                            <span class="input-group-text" id="basic-addon3">Magazine</span>
+                            <input type="text" class="form-control" id="add-magazine" name="magazine">
+                        </div>
+                        <div class="input-group pt-2">
+                            <span class="input-group-text" id="basic-addon3">Ammunition</span>
+                            <input type="text" class="form-control" id="add-ammunition" name="ammunition">
+                        </div>
+                        <div class="input-group pt-2">
+                            <span class="input-group-text" id="basic-addon3">Reargrip</span>
+                            <input type="text" class="form-control" id="add-reargrip" name="reargrip">
+                        </div>
+                        <div class="input-group pt-2">
+                            <span class="input-group-text" id="basic-addon3">Guard</span>
+                            <input type="text" class="form-control" id="add-guard" name="guard">
+                        </div>
+                        <div class="input-group pt-2">
+                            <span class="input-group-text" id="basic-addon3">Comb</span>
+                            <input type="text" class="form-control" id="add-comb" name="comb">
+                        </div>
+                        <div class="input-group pt-2">
+                            <span class="input-group-text" id="basic-addon3">Receiver</span>
+                            <input type="text" class="form-control" id="add-receiver" name="receiver">
+                        </div>
+                        <div class="input-group pt-2">
+                            <span class="input-group-text" id="basic-addon3">Alternative</span>
+                            <input type="text" class="form-control" id="add-alternative" name="alternative">
+                        </div>
+                        <div class="input-group pt-2">
+                            <span class="input-group-text" id="basic-addon3">Alternative 2</span>
+                            <input type="text" class="form-control" id="add-alternative2" name="alternative2">
+                        </div>
+                        <div class="form-group pt-2">
+                            <button type="submit" class="btn btn-warning btn-block text-white">Add</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

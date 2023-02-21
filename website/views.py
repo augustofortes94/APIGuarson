@@ -138,7 +138,8 @@ class WeaponW1View(ListView):
     def add(request, data):
         command = Command.objects.create(
                     name=data['command'],
-                    category=data['category']
+                    category=data['category'],
+                    warzone_version='w1'
                     )
         WeaponW1.objects.create(
             command=command,
@@ -265,7 +266,8 @@ class WeaponW2View(ListView):
     def add(request, data):
         command = Command.objects.create(
                     name=data['command'],
-                    category=data['category']
+                    category=data['category'],
+                    warzone_version='w2'
                     )
         WeaponW2.objects.create(
             command=command,
@@ -280,8 +282,9 @@ class WeaponW2View(ListView):
             magazine=data['magazine'],
             ammunition=data['ammunition'],
             reargrip=data['reargrip'],
-            perk=data['perk'],
-            perk2=data['perk2'],
+            guard=data['guard'],
+            comb=data['comb'],
+            receiver=data['receiver'],
             alternative=data['alternative'],
             alternative2=data['alternative2']
         )
@@ -305,8 +308,9 @@ class WeaponW2View(ListView):
         weapon.magazine = data['magazine']
         weapon.ammunition = data['ammunition']
         weapon.reargrip = data['reargrip']
-        weapon.perk = data['perk']
-        weapon.perk2 = data['perk2']
+        weapon.guard = data['guard']
+        weapon.comb = data['comb']
+        weapon.receiver = data['receiver']
         weapon.alternative = data['alternative']
         weapon.alternative2 = data['alternative2']
         weapon.save()
@@ -330,12 +334,12 @@ class WeaponW2View(ListView):
             data = json.loads(json.dumps(data))
             WeaponW2View.add(request, data)
             messages.success(request, data['name'] + ' ha sido creada')
-        return redirect('/w1/weapon/list')
+        return redirect('/w2/weapon/list')
 
     @login_required
     @user_passes_test(lambda u: u.is_staff)
     def weaponAddForm(request):
-        return render(request, 'crud_weapons/weapon_add.html')
+        return render(request, 'crud_weapons/weapon_w2_add.html')
 
     @login_required
     @user_passes_test(lambda u: u.is_superuser)
@@ -344,19 +348,19 @@ class WeaponW2View(ListView):
         WeaponW2.objects.filter(id=id).delete()
         Command.objects.filter(id=weapon.command.id).delete()
         messages.success(request,  weapon.name + ' ha sido eliminada')
-        return redirect('/w1/weapon/list')
+        return redirect('/w2/weapon/list')
 
     def weaponDetail(request, command):
         command = Command.objects.filter(name=command)[0]
         weapon = WeaponW2.objects.filter(command=command).first()
-        return render(request, 'crud_weapons/weapon_detail.html', {"weapon": weapon})
+        return render(request, 'crud_weapons/weapon_w2_detail.html', {"weapon": weapon})
 
     @login_required
     @user_passes_test(lambda u: u.is_staff)
     def weaponEdit(request, command):
         command = Command.objects.filter(name__icontains=command)[0]
         weapon = WeaponW2.objects.filter(command=command).first()
-        return render(request, 'crud_weapons/weapon_edit.html', {"weapon": weapon})
+        return render(request, 'crud_weapons/weapon_w2_edit.html', {"weapon": weapon})
 
     @login_required
     @user_passes_test(lambda u: u.is_staff)
@@ -372,7 +376,7 @@ class WeaponW2View(ListView):
         data = json.loads(json.dumps(data))
         WeaponW2View.edit(request, data, id)
         messages.success(request, data['name'] + ' ha sido modificada')
-        return redirect('/w1/weapon/list')
+        return redirect('/w2/weapon/list')
 
     def weaponList(request):
         if request.method == "POST":

@@ -19,13 +19,26 @@
                 {% for weapon in page_obj %}
                 <tr>
                     <td class="text-center">{{ weapon.name }}</td>
-                    <td class="text-center"><a class="btn btn-link" href="/w1/weapon/{{ weapon.command.name }}">/{{ weapon.command.name }}</a></td>
+                    {% if 'w1' in request.path %}
+                        <td class="text-center"><a class="btn btn-link" href="/w1/weapon/{{ weapon.command.name }}">/{{ weapon.command.name }}</a></td>
+                    {% elif 'w2' in request.path %}
+                        <td class="text-center"><a class="btn btn-link" href="/w2/weapon/{{ weapon.command.name }}">/{{ weapon.command.name }}</a></td>
+                    {% endif %}
                     <td class="text-center">{{ weapon.category }}</td>
                     {% if request.user.is_staff %}
                         <td class="text-center">
-                            <a class="btn" href="/w1/weapon/edit/{{ weapon.command.name }}"><i class="fa-regular fa-pen-to-square"></i></a>    <!-- Edit -->
+                            {% if 'w1' in request.path %}
+                                <a class="btn" href="/w1/weapon/edit/{{ weapon.command.name }}"><i class="fa-regular fa-pen-to-square"></i></a>    <!-- Edit -->
+                            {% elif 'w2' in request.path %}
+                                <a class="btn" href="/w2/weapon/edit/{{ weapon.command.name }}"><i class="fa-regular fa-pen-to-square"></i></a>    <!-- Edit -->
+                            {% endif %}
+                            
                             {% if request.user.is_superuser %}
-                                <a class="btn ms-3" href="/w1/weapon/delete/{{ weapon.id }}"><i class="fa-regular fa-trash-can"></i></a>   <!-- Delete -->
+                                {% if 'w1' in request.path %}
+                                    <a class="btn ms-3" href="/w1/weapon/delete/{{ weapon.id }}"><i class="fa-regular fa-trash-can"></i></a>   <!-- Delete -->
+                                {% elif 'w2' in request.path %}
+                                    <a class="btn ms-3" href="/w2/weapon/delete/{{ weapon.id }}"><i class="fa-regular fa-trash-can"></i></a>   <!-- Delete -->
+                                {% endif %}
                             {% endif %}
                         </td>
                     {% endif %}
@@ -52,7 +65,11 @@
         </div>
         {% if request.user.is_staff %}
             <div class="d-grid gap-2 col-1 mx-auto">
-                <a class="btn btn-warning" href="/w1/weapon/addform">Add</a>
+                {% if 'w1' in request.path %}
+                    <a class="btn btn-warning" href="/w1/weapon/addform">Add</a>
+                {% elif 'w2' in request.path %}
+                    <a class="btn btn-warning" href="/w2/weapon/addform">Add</a>
+                {% endif %}
             </div>
         {% endif %}
     </div>
