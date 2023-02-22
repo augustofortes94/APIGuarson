@@ -1,7 +1,6 @@
 import os
 from dotenv import load_dotenv
 from pathlib import Path
-from datetime import timedelta
 import dj_database_url
 
 
@@ -76,23 +75,21 @@ WSGI_APPLICATION = 'ProyectoAPI.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-#if os.getenv('DEBUG_MODE') == 'True':
-DATABASES = {
-                'default': {
-                    'ENGINE': 'django.db.backends.postgresql_psycopg2',
-                    'HOST': os.getenv('DATABASE_HOST'),
-                    'PORT': os.getenv('DATABASE_PORT'),
-                    'USER': os.getenv('DATABASE_USER'),
-                    'PASSWORD': os.getenv('DATABASE_PSW'),
-                    'NAME': os.getenv('DATABASE_NAME')
+if os.getenv('DEBUG_MODE') == 'True':
+    DATABASES = {
+                    'default': {
+                        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+                        'HOST': os.getenv('DATABASE_HOST'),
+                        'PORT': os.getenv('DATABASE_PORT'),
+                        'USER': os.getenv('DATABASE_USER'),
+                        'PASSWORD': os.getenv('DATABASE_PSW'),
+                        'NAME': os.getenv('DATABASE_NAME')
+                        }
                     }
-                }
-"""
 else:
     DATABASES = {
         "default": dj_database_url.config(default=os.environ['DATABASE_URL'], conn_max_age=1800),
     }
-"""
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
@@ -141,6 +138,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
 STATIC_URL = '/static/'
+MEDIA_URL = 'media/'
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
