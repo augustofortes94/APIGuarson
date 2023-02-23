@@ -1,19 +1,33 @@
 from django.db import models
+from django.db.models.functions import Cast, Concat
 from django.utils import timezone
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
 
 
 class Command(models.Model):
-    name = models.CharField(max_length=50, unique=True)
+    name = models.CharField(max_length=50)
     category = models.CharField(max_length=50)
     text = models.CharField(max_length=500, null=True, blank=True, default=None)
     parameter1 = models.CharField(max_length=50, null=True, blank=True, default=None)
     parameter2 = models.CharField(max_length=50, null=True, blank=True, default=None)
     warzone_version = models.CharField(max_length=2, null=True, blank=True, default=None)
+    identity_name_version = models.CharField(max_length=100, blank=True, null=True, unique=True)
     updated_on = models.DateTimeField(null=True, blank=True)
 
     def save(self, *args, **kwargs):
         self.updated_on = timezone.now()
+        if self.warzone_version is None:
+            self.identity_name_version = self.name + '_None'
+        else:
+            self.identity_name_version = self.name + '_' + self.warzone_version
         return super(Command, self).save(*args, **kwargs)
+
+@receiver(pre_save, sender=Command)
+def update_identity_name_version(sender, instance, **kwargs):
+    if not instance.identity_name_version:
+        # If the identity has not been set, create it from name and version
+        instance.identity_name_version = f"{instance.name}_{instance.warzone_version}"
 
 
 class WeaponW1(models.Model):
