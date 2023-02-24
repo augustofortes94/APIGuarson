@@ -243,14 +243,14 @@ class WeaponW1View(ListView):
         return redirect('/w1/weapon/list')
 
     def weaponDetail(request, command):
-        command = Command.objects.filter(name=command)[0]
+        command = Command.objects.filter(identity_name_version=command + '_w1')[0]
         weapon = WeaponW1.objects.filter(command=command).first()
         return render(request, 'crud_weapons/weapon_w1_detail.html', {"weapon": weapon})
 
     @login_required
     @user_passes_test(lambda u: u.is_staff)
     def weaponEdit(request, command):
-        command = Command.objects.filter(name__icontains=command)[0]
+        command = Command.objects.filter(identity_name_version=command + '_w1')[0]
         weapon = WeaponW1.objects.filter(command=command).first()
         return render(request, 'crud_weapons/weapon_w1_edit.html', {"weapon": weapon})
 
@@ -380,7 +380,7 @@ class WeaponW2View(ListView):
     @login_required
     @user_passes_test(lambda u: u.is_staff)
     def weaponEdit(request, command):
-        command = Command.objects.filter(name__icontains=command)[0]
+        command = Command.objects.filter(identity_name_version=command + '_w2')[0]
         weapon = WeaponW2.objects.filter(command=command).first()
         return render(request, 'crud_weapons/weapon_w2_edit.html', {"weapon": weapon})
 
