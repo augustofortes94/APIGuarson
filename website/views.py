@@ -26,9 +26,13 @@ class CommandView(ListView):
     @user_passes_test(lambda u: u.is_superuser)
     def commandAdd(request):
         try:
-            Command.objects.get(name=request.POST['name'])
+            if request.POST['warzone_version'] is '':
+                warzone_version = 'None'
+            else:
+                warzone_version = request.POST['warzone_version']
+            Command.objects.get(identity_name_version=request.POST['name'] + '_' + warzone_version)
             messages.warning(request, 'El comando ya existe')
-        except:
+        except Exception:
             data = {}
             for key in request.POST:
                 if key == 'csrfmiddlewaretoken':
@@ -73,24 +77,32 @@ class CommandView(ListView):
     @login_required
     @user_passes_test(lambda u: u.is_superuser)
     def commandEdition(request, id):
-        data = {}
-        for key in request.POST:
-            if key == 'csrfmiddlewaretoken':
-                pass
-            elif request.POST[key] == 'None' or request.POST[key] == "":
-                data[key] = None
+        try:
+            if request.POST['warzone_version'] is '':
+                warzone_version = 'None'
             else:
-                data[key] = request.POST[key]
-        data = json.loads(json.dumps(data))
-        command = Command.objects.get(id=id)
-        command.name = data['name']
-        command.category = data['category']
-        command.text = data['text']
-        command.parameter1 = data['parameter1']
-        command.parameter2 = data['parameter2']
-        command.warzone_version = data['warzone_version']
-        command.save()
-        messages.success(request, data['name'] + ' ha sido modificado')
+                warzone_version = request.POST['warzone_version']
+            Command.objects.get(identity_name_version=request.POST['name'] + '_' + warzone_version)
+            messages.warning(request, 'El comando ya existe')
+        except Exception:
+            data = {}
+            for key in request.POST:
+                if key == 'csrfmiddlewaretoken':
+                    pass
+                elif request.POST[key] == 'None' or request.POST[key] == "":
+                    data[key] = None
+                else:
+                    data[key] = request.POST[key]
+            data = json.loads(json.dumps(data))
+            command = Command.objects.get(id=id)
+            command.name = data['name']
+            command.category = data['category']
+            command.text = data['text']
+            command.parameter1 = data['parameter1']
+            command.parameter2 = data['parameter2']
+            command.warzone_version = data['warzone_version']
+            command.save()
+            messages.success(request, data['name'] + ' ha sido modificado')
         return redirect('/command/list')
 
 
@@ -120,11 +132,11 @@ class ModeLobbyView(ListView):
         try:
             Lobby.objects.get(mode=request.POST['mode'])
             messages.warning(request, 'El modo ya existen')
-        except:
+        except Exception:
             try:
                 Lobby.objects.get(name=request.POST['name'])
                 messages.warning(request, 'El nombre ya existen')
-            except:
+            except Exception:
                 Lobby.objects.create(
                     mode=request.POST['mode'],
                     name=request.POST['name'],
@@ -202,7 +214,7 @@ class WeaponW1View(ListView):
         try:
             WeaponW1.objects.get(command__name=request.POST['command'])
             messages.warning(request, request.POST['command'] + ' ya existe')
-        except:
+        except Exception:
             data = {}
             for key in request.POST:
                 if key == 'csrfmiddlewaretoken':
@@ -332,7 +344,7 @@ class WeaponW2View(ListView):
         try:
             WeaponW2.objects.get(command__name=request.POST['command'])
             messages.warning(request, request.POST['command'] + ' ya existe')
-        except:
+        except Exception:
             data = {}
             for key in request.POST:
                 if key == 'csrfmiddlewaretoken':
