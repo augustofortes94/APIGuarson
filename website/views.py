@@ -26,7 +26,7 @@ class CommandView(ListView):
     @user_passes_test(lambda u: u.is_superuser)
     def commandAdd(request):
         try:
-            if request.POST['warzone_version'] is '':
+            if request.POST['warzone_version'] == '':
                 warzone_version = 'None'
             else:
                 warzone_version = request.POST['warzone_version']
@@ -68,7 +68,7 @@ class CommandView(ListView):
         version['value'] = command.warzone_version
         if command.warzone_version is None:
             version['name'] = 'Ambos'
-        elif command.warzone_version is 'w1':
+        elif command.warzone_version == 'w1':
             version['name'] = 'Guarson 1'
         else:
             version['name'] = 'Guarson 2'
@@ -78,7 +78,7 @@ class CommandView(ListView):
     @user_passes_test(lambda u: u.is_superuser)
     def commandEdition(request, id):
         try:
-            if request.POST['warzone_version'] is '':
+            if request.POST['warzone_version'] == '':
                 warzone_version = 'None'
             else:
                 warzone_version = request.POST['warzone_version']
@@ -373,7 +373,7 @@ class WeaponW2View(ListView):
         return redirect('/w2/weapon/list')
 
     def weaponDetail(request, command):
-        command = Command.objects.filter(name=command)[0]
+        command = Command.objects.filter(identity_name_version=command + '_w2')[0]
         weapon = WeaponW2.objects.filter(command=command).first()
         return render(request, 'crud_weapons/weapon_w2_detail.html', {"weapon": weapon})
 
