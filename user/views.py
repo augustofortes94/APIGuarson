@@ -1,16 +1,9 @@
-#import jwt
-import datetime
 from .forms import UserRegisterForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.models import User
 from django.shortcuts import redirect, render
-from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import CreateView
-from rest_framework import status
-from rest_framework.response import Response
-from rest_framework.views import APIView
 
 """
 class ApiLogin(APIView):
@@ -48,7 +41,7 @@ class RegisterUser(CreateView):
                 form.save()
                 username = form.cleaned_data.get('username')
                 messages.success(request, f'Account created for {username}, please Login')
-                return redirect('/weapon/list')
+                return redirect('/home')
         else:
             form = UserRegisterForm()
         return render(request, 'registration/register.html', {'form': form})
