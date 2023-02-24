@@ -30,7 +30,25 @@
                         <li class="nav-item">
                             <a class="nav-item nav-link" href="/home"><i class="fa-solid fa-house"></i></a>  <!-- Home -->
                         </li>
-                        {% block navbar %} {% endblock %}
+                        <li class="nav-item">
+                            {% block buttons %} {% endblock %}
+                        </li>
+                        {% if request.user.is_superuser or request.user.is_staff %}
+                            {% if request.user.is_superuser %}
+                                <li class="nav-item">
+                                    <a class="nav-item nav-link" href="/user/list"><i class="fa-solid fa-user-pen"></i></a> <!-- Edit users -->
+                                </li>
+                            {% endif %}
+                            <li class="nav-item">
+                                <a class="nav-item nav-link" href="/mode/list"><i class="fa-solid fa-map-location-dot"></i></a> <!-- Edit modes -->
+                            </li>
+                            <li class="nav-item w-25">
+                                <a class="nav-item nav-link" href="/command/list"><i class="fa-solid fa-terminal"></i></a> <!-- Edit commands -->
+                            </li>
+                        {% endif %}
+                        <li class="nav-item d-flex justify-content-start w-75">
+                            {% block searchbar %} {% endblock %}
+                        </li>
                     </ul>
                 </div>
                 {% if request.user.is_authenticated %}
