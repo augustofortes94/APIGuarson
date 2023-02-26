@@ -20,12 +20,12 @@ class CommandApi(APIView):
 
     def get(self, request, *args, **kwargs):
         try:    # Get by command
-            command = Command.objects.filter(Q(name__istartswith=request.GET.get('command'))).values()[0]
-            if command['warzone_version'] == request.GET.get('warzone_version') or command['warzone_version'] is None:
-                serializer = CommandSerializer(command)
-                return Response({'message': "Success", 'command': serializer.data}, status=status.HTTP_202_ACCEPTED)
+            if 'warzone_version' in request.GET:
+                command = Command.objects.filter(Q(name__istartswith=request.GET.get('command')), Q(warzone_version=request.GET.get('warzone_version'))).values()[0]
             else:
-                return Response(status=status.HTTP_400_BAD_REQUEST)
+                command = Command.objects.filter(Q(name__istartswith=request.GET.get('command'))).values()[0]
+            serializer = CommandSerializer(command)
+            return Response({'message': "Success", 'command': serializer.data}, status=status.HTTP_202_ACCEPTED)
         except:
             try:    # Get all commands by category
                 data = {}
@@ -193,8 +193,7 @@ class WeaponW2Api(APIView):
             if request.GET.get('id'):
                 weapons = WeaponW2.objects.filter(id=request.GET.get('id'))
             elif request.GET.get('command'):
-                command = Command.objects.filter(Q(name__icontains=request.GET.get('command')), Q(identity_name_version__endswith='w2'))[0]
-                weapons = WeaponW2.objects.select_related().filter(command=command)
+                weapons = WeaponW2.objects.select_related().filter(command__name=request.GET.get('command'))
             else:   # Get all
                 weapons = WeaponW2.objects.all()
             serializer = WeaponW2Serializer(weapons, many=True)
