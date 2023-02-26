@@ -193,7 +193,7 @@ class WeaponW2Api(APIView):
             if request.GET.get('id'):
                 weapons = WeaponW2.objects.filter(id=request.GET.get('id'))
             elif request.GET.get('command'):
-                command = Command.objects.filter(name__icontains=request.GET.get('command'))[0]
+                command = Command.objects.filter(Q(name__icontains=request.GET.get('command')), Q(identity_name_version__endswith='w2'))[0]
                 weapons = WeaponW2.objects.select_related().filter(command=command)
             else:   # Get all
                 weapons = WeaponW2.objects.all()
